@@ -7,7 +7,58 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Roboto,sans-serif;}
-body,html{background:#000;color:#fff;scroll-behavior:smooth}
+body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden;}
+
+/* TWINKLING STARS */
+.star{
+  position:fixed;
+  background:white;
+  border-radius:50%;
+  opacity:0.8;
+  animation:twinkle linear infinite;
+  z-index:0;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0.3;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.5);}
+}
+
+/* SNOW */
+.snow{
+  position:fixed;
+  top:-10px;
+  background:white;
+  border-radius:50%;
+  opacity:.8;
+  animation:fall linear infinite;
+  z-index:0;
+  filter:blur(1px);
+}
+@keyframes fall{
+  to{transform:translateY(110vh)}
+}
+
+/* HERO TEXT */
+#hero{
+  z-index:1;
+  text-align:center;
+  position:relative;
+  margin-top:50px;
+}
+#hero h2{
+  font-size:64px;
+  letter-spacing:4px;
+  animation:pop 1.5s ease-out forwards, shimmer 3s infinite;
+  text-shadow:0 0 25px #00d2ff, 0 0 50px #fff;
+}
+@keyframes pop{
+  from{transform:scale(0);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+@keyframes shimmer{
+  0%,100%{text-shadow:0 0 25px #00d2ff,0 0 50px #fff;}
+  50%{text-shadow:0 0 35px #00f0ff,0 0 60px #fff;}
+}
 
 /* LOADER */
 #loader{
@@ -157,6 +208,36 @@ body,html{background:#000;color:#fff;scroll-behavior:smooth}
 
 <body>
 
+<!-- TWINKLING STARS -->
+<script>
+for(let i=0;i<50;i++){
+  let star=document.createElement("div");
+  star.className="star";
+  star.style.left=Math.random()*100+"vw";
+  let size=1+Math.random()*2;
+  star.style.width=star.style.height=size+"px";
+  star.style.animationDuration=2+Math.random()*3+"s";
+  document.body.appendChild(star);
+}
+
+/* SNOW */
+for(let i=0;i<120;i++){
+  let s=document.createElement("div");
+  s.className="snow";
+  s.style.left=Math.random()*100+"vw";
+  let size=2+Math.random()*4;
+  s.style.width=s.style.height=size+"px";
+  s.style.animationDuration=3+Math.random()*5+"s";
+  document.body.appendChild(s);
+}
+</script>
+
+<!-- HERO -->
+<div id="hero">
+  <h2>❄️ HAPPY NEW YEAR 2026 ❄️</h2>
+</div>
+
+<!-- LOADER -->
 <div id="loader">
   <h1>RENUOVA</h1>
   <div class="progress-bar"><div class="progress"></div></div>
@@ -274,11 +355,13 @@ BUY NOW
 </div>
 
 <script>
+/* HIDE LOADER AND SHOW MAIN */
 setTimeout(()=>{
   loader.style.display="none";
   main.style.display="block";
 },3000);
 
+/* SLIDER FUNCTION */
 const slider=document.getElementById("slider");
 const thumbs=document.querySelectorAll(".thumb-btn");
 function goSlide(i,btn){
@@ -286,6 +369,8 @@ function goSlide(i,btn){
   thumbs.forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
+
+/* LANGUAGE SWITCH */
 function showLang(l){
   english.style.display=l==="english"?"block":"none";
   hindi.style.display=l==="hindi"?"block":"none";

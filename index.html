@@ -46,11 +46,23 @@ body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden
   margin-top:50px;
 }
 #hero h2{
-  font-size:64px;
-  letter-spacing:4px;
+  font-size:2.2rem; /* MOBILE: same as header logo */
+  letter-spacing:2px;
   animation:pop 1.5s ease-out forwards, shimmer 3s infinite;
-  text-shadow:0 0 25px #00d2ff, 0 0 50px #fff;
+  text-shadow:0 0 15px #00d2ff, 0 0 30px #fff;
+  margin:0;
 }
+
+/* Tablet */
+@media(min-width:768px){
+  #hero h2{font-size:3.5rem;}
+}
+
+/* Desktop */
+@media(min-width:1024px){
+  #hero h2{font-size:5rem;}
+}
+
 @keyframes pop{
   from{transform:scale(0);opacity:0}
   to{transform:scale(1);opacity:1}
@@ -67,7 +79,11 @@ body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden
   align-items:center;justify-content:center;z-index:9999
 }
 #loader h1{
-  font-size:3.5rem;color:#00d2ff;letter-spacing:8px;
+  font-size:34px; /* header size */
+  color:#00d2ff;
+  letter-spacing:6px;
+  text-align:center;
+  white-space:nowrap;
   animation:glow 1.5s infinite alternate
 }
 @keyframes glow{
@@ -234,7 +250,7 @@ for(let i=0;i<120;i++){
 
 <!-- HERO -->
 <div id="hero">
-  <h2>❄️ HAPPY NEW YEAR 2026 ❄️</h2>
+  <h1>❄️ HAPPY NEW YEAR 2026 ❄️</h1>
 </div>
 
 <!-- LOADER -->

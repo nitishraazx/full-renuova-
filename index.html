@@ -4,114 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RENUOVA | AMS – Automatic Motor Switch</title>
+<!-- Flipkart uses Roboto font, imported here -->
+<link href="fonts.googleapis.com" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Roboto,sans-serif;}
-body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden;}
+/* Reset and base styles */
+*{margin:0;padding:0;box-sizing:border-box;font-family: 'Roboto', sans-serif;}
+body,html{background:#f1f3f6;color:#333;scroll-behavior:smooth}
 
-/* TWINKLING STARS */
-.star{
-  position:fixed;
-  background:white;
-  border-radius:50%;
-  opacity:0.8;
-  animation:twinkle linear infinite;
-  z-index:0;
-}
-@keyframes twinkle{
-  0%,100%{opacity:0.3;transform:scale(1);}
-  50%{opacity:1;transform:scale(1.5);}
-}
-
-/* SNOW */
-.snow{
-  position:fixed;
-  top:-10px;
-  background:white;
-  border-radius:50%;
-  opacity:.8;
-  animation:fall linear infinite;
-  z-index:0;
-  filter:blur(1px);
-}
-@keyframes fall{
-  to{transform:translateY(110vh)}
-}
-
-/* HERO TEXT */
-#hero{
-  z-index:1;
-  text-align:center;
-  position:relative;
-  margin-top:50px;
-}
-#hero h2{
-  font-size:2.2rem; /* MOBILE: same as header logo */
-  letter-spacing:2px;
-  animation:pop 1.5s ease-out forwards, shimmer 3s infinite;
-  text-shadow:0 0 15px #00d2ff, 0 0 30px #fff;
-  margin:0;
-}
-
-/* Tablet */
-@media(min-width:768px){
-  #hero h2{font-size:3.5rem;}
-}
-
-/* Desktop */
-@media(min-width:1024px){
-  #hero h2{font-size:5rem;}
-}
-
-@keyframes pop{
-  from{transform:scale(0);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-@keyframes shimmer{
-  0%,100%{text-shadow:0 0 25px #00d2ff,0 0 50px #fff;}
-  50%{text-shadow:0 0 35px #00f0ff,0 0 60px #fff;}
-}
-
-/* LOADER */
+/* LOADER - Kept mostly same but color changed to Flipkart blue */
 #loader{
-  position:fixed;inset:0;background:#000;
+  position:fixed;inset:0;background:#fff;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;z-index:9999
 }
 #loader h1{
-  font-size:34px; /* header size */
-  color:#00d2ff;
-  letter-spacing:6px;
-  text-align:center;
-  white-space:nowrap;
+  font-size:3.5rem;color:#2874f0;letter-spacing:8px;
   animation:glow 1.5s infinite alternate
 }
 @keyframes glow{
-  from{text-shadow:0 0 5px #00d2ff}
-  to{text-shadow:0 0 25px #00d2ff}
+  from{text-shadow:0 0 5px #2874f0}
+  to{text-shadow:0 0 25px #2874f0}
 }
-.progress-bar{width:280px;height:6px;background:#111;margin-top:25px;border-radius:5px;overflow:hidden}
-.progress{height:100%;width:0;background:#00d2ff;animation:load 3s forwards}
+.progress-bar{width:280px;height:6px;background:#eee;margin-top:25px;border-radius:5px;overflow:hidden}
+.progress{height:100%;width:0;background:#2874f0;animation:load 3s forwards}
 @keyframes load{to{width:100%}}
 
 #main{display:none}
 
-/* HEADER */
-.header{text-align:center;padding:18px;border-bottom:1px solid rgba(0,210,255,.3)}
-.logo{font-size:34px;letter-spacing:6px;color:#00d2ff}
+/* HEADER - Flipkart Blue */
+.header{
+    text-align:center;
+    padding:18px;
+    background-color: #2874f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.logo{font-size:34px;letter-spacing:6px;color:#fff;font-weight: 700;}
 
-/* CARD */
-.container{display:flex;justify-content:center;padding:40px 15px}
+/* CARD - White background, subtle shadow */
+.container{display:flex;justify-content:center;padding:20px 15px}
 .product-card{
   max-width:1150px;width:100%;
-  display:flex;background:#0a0a0a;
-  border-radius:18px;overflow:hidden;
-  border:1px solid rgba(0,210,255,.2)
+  display:flex;background:#fff;
+  border-radius:4px;overflow:hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 @media(max-width:900px){.product-card{flex-direction:column}}
 
-/* IMAGE */
-.image-box{flex:1.1;background:#fff;padding:30px;text-align:center}
+/* IMAGE - Background stays white */
+.image-box{flex:1.1;background:#fff;padding:30px;text-align:center; border-right: 1px solid #f1f3f6;}
+@media(max-width:900px){.image-box{border-right: none; border-bottom: 1px solid #f1f3f6;}}
+
 .slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
 .slider::-webkit-scrollbar{display:none}
 .slide{
@@ -121,102 +64,109 @@ body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden
 }
 .slide img{
   max-width:100%;max-height:100%;
-  animation:float 3s ease-in-out infinite
+  /* Removed float animation as Flipkart images are static usually */
 }
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
+
 .thumbnail-gallery{display:flex;justify-content:center;gap:12px;margin-top:15px}
 .thumb-btn{
-  width:70px;height:70px;border-radius:10px;
-  border:2px solid #ccc;background:#fff;cursor:pointer;overflow:hidden
+  width:70px;height:70px;border-radius:4px;
+  border:2px solid #ccc;background:#fff;cursor:pointer;overflow:hidden;
+  transition: border-color 0.3s;
 }
 .thumb-btn.active{
-  border-color:#00d2ff;
-  box-shadow:0 0 10px rgba(0,210,255,.7)
+  border-color:#2874f0; /* Flipkart Blue */
+  box-shadow:0 0 10px rgba(40,116,240,0.3);
 }
 .thumb-btn img{width:100%;height:100%;object-fit:contain}
 
 /* DETAILS */
-.details-box{flex:1.5;padding:40px}
-.product-title{font-size:30px;color:#00d2ff}
-.tagline{color:#aaa;font-style:italic;margin-bottom:10px;display:block}
+.details-box{flex:1.5;padding:40px;color: #333;}
+.product-title{font-size:30px;color:#333; margin-bottom: 5px;}
+.tagline{color:#878787;font-style:normal;margin-bottom:10px;display:block;font-size: 14px;}
 .badge{
   display:inline-block;margin:10px 0;padding:6px 14px;
-  background:#2e7d32;border-radius:20px;font-size:14px
+  background:#388e3c; /* A nice green for success/safety */
+  border-radius:4px;font-size:14px;color: #fff;
 }
-.rating{margin:10px 0;font-size:16px;color:#ffc107}
-.rating span{color:#aaa;font-size:14px}
+.rating{margin:10px 0;font-size:16px;color:#388e3c; font-weight: 500;} /* Flipkart green color for rating */
+.rating span{color:#878787;font-size:14px}
 
 /* TRUST */
 .trust-row{
   display:flex;gap:12px;flex-wrap:wrap;margin:15px 0
 }
 .trust-badge{
-  background:#0f172a;
-  border:1px solid rgba(0,210,255,.4);
-  padding:8px 14px;border-radius:20px;
-  font-size:14px;color:#00d2ff
+  background:#f0f8ff; /* Light blue background */
+  border:1px solid #2874f0;
+  padding:8px 14px;border-radius:4px;
+  font-size:14px;color:#2874f0;
 }
 
 /* LANGUAGE */
 .lang-switch{margin:20px 0}
 .lang-switch button{
   padding:8px 18px;margin-right:10px;
-  border:none;border-radius:20px;
-  background:#00d2ff;color:#000;
-  font-weight:600;cursor:pointer
+  border:none;border-radius:4px;
+  background:#2874f0;color:#fff;
+  font-weight:600;cursor:pointer;
+  transition: background-color 0.3s;
+}
+.lang-switch button:hover {
+    background-color: #1a56bf;
 }
 
 /* CONTENT */
-.description p,.description li{color:#ccc;line-height:1.7;margin-bottom:8px}
-.description h3{margin-top:22px;color:#00d2ff}
+.description p,.description li{color:#555;line-height:1.7;margin-bottom:8px;font-size: 14px;}
+.description h3{margin-top:22px;color:#333;border-bottom: 1px solid #eee; padding-bottom: 5px;}
 #hindi{display:none}
 
-/* PRICE */
+/* PRICE AREA */
 .price-area{
-  margin:25px 0;padding:20px;
-  background:#111;border-radius:14px
+  margin:25px 0;padding:0; /* No padding needed here */
+  background:none;border-radius:0;
 }
-.price{font-size:36px;font-weight:bold}
-.mrp{text-decoration:line-through;color:#777;margin-left:10px}
-.discount{color:#4caf50;margin-left:10px}
+.price{font-size:36px;font-weight:bold;color: #26a541;} /* Flipkart green for price */
+.mrp{text-decoration:line-through;color:#878787;margin-left:10px;font-size: 18px;}
+.discount{color:#388e3c;margin-left:10px;font-weight: 500;}
 
-/* BUY */
+/* BUY BUTTON */
 .buy-btn{
   display:block;text-align:center;padding:18px;
-  background:#25D366;color:#fff;
-  border-radius:14px;text-decoration:none;
+  background:#fb641b; /* Flipkart Orange for "Buy Now" */
+  color:#fff;
+  border-radius:4px;text-decoration:none;
   font-size:20px;font-weight:bold;
-  animation:pulse 1.5s infinite
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,.2);
+  /* Removed pulse animation for cleaner look */
+  transition: background-color 0.3s;
 }
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(37,211,102,.6)}
-  70%{box-shadow:0 0 0 18px rgba(37,211,102,0)}
-  100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}
+
+.buy-btn:hover {
+    background-color: #ea540b;
 }
 
 /* MOBILE FIXED BAR */
 .mobile-buy-bar{display:none}
 @media(max-width:768px){
-  body{padding-bottom:85px}
+  body{padding-bottom:75px}
   .mobile-buy-bar{
     display:flex;position:fixed;bottom:0;left:0;
-    width:100%;background:#0b0b0b;
-    border-top:1px solid rgba(0,210,255,.4);
-    padding:10px;z-index:999;gap:10px
+    width:100%;background:#fff;
+    border-top:1px solid #eee;
+    padding:10px;z-index:999;gap:10px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
   }
   .mobile-buy-bar .price{
     flex:1;display:flex;
     align-items:center;justify-content:center;
-    font-size:20px;color:#00d2ff;font-weight:bold
+    font-size:24px;color:#26a541;font-weight:bold;
   }
   .mobile-buy-bar a{
-    flex:1.3;background:#25D366;
+    flex:1.5;background:#fb641b;
     color:#fff;text-align:center;
-    padding:14px;border-radius:12px;
-    font-weight:bold;text-decoration:none
+    padding:14px;border-radius:4px;
+    font-weight:bold;text-decoration:none;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.2);
   }
 }
 </style>
@@ -224,36 +174,6 @@ body,html{background:#020b18;color:#fff;scroll-behavior:smooth;overflow-x:hidden
 
 <body>
 
-<!-- TWINKLING STARS -->
-<script>
-for(let i=0;i<50;i++){
-  let star=document.createElement("div");
-  star.className="star";
-  star.style.left=Math.random()*100+"vw";
-  let size=1+Math.random()*2;
-  star.style.width=star.style.height=size+"px";
-  star.style.animationDuration=2+Math.random()*3+"s";
-  document.body.appendChild(star);
-}
-
-/* SNOW */
-for(let i=0;i<120;i++){
-  let s=document.createElement("div");
-  s.className="snow";
-  s.style.left=Math.random()*100+"vw";
-  let size=2+Math.random()*4;
-  s.style.width=s.style.height=size+"px";
-  s.style.animationDuration=3+Math.random()*5+"s";
-  document.body.appendChild(s);
-}
-</script>
-
-<!-- HERO -->
-<div id="hero">
-  <h1>❄️ HAPPY NEW YEAR 2026 ❄️</h1>
-</div>
-
-<!-- LOADER -->
 <div id="loader">
   <h1>RENUOVA</h1>
   <div class="progress-bar"><div class="progress"></div></div>
@@ -267,6 +187,7 @@ for(let i=0;i<120;i++){
 
 <div class="image-box">
   <div class="slider" id="slider">
+    <!-- Make sure these image URLs are correct -->
     <div class="slide"><img src="https://i.ibb.co/kgmNPpsz/instasquare-photoeditor-effect-cutout-20251219193556223.png"></div>
     <div class="slide"><img src="https://i.ibb.co/8Lgk45Gy/instasquare-photoeditor-effect-cutout-20251219192722467.png"></div>
     <div class="slide"><img src="https://i.ibb.co/93C0jyh3/DEVICE-DIGRAM.png"></div>
@@ -371,27 +292,382 @@ BUY NOW
 </div>
 
 <script>
-/* HIDE LOADER AND SHOW MAIN */
 setTimeout(()=>{
-  loader.style.display="none";
-  main.style.display="block";
+  document.getElementById('loader').style.display="none";
+  document.getElementById('main').style.display="block";
 },3000);
 
-/* SLIDER FUNCTION */
-const slider=document.getElementById("slider");
-const thumbs=document.querySelectorAll(".thumb-btn");
-function goSlide(i,btn){
-  slider.scrollTo({left:slider.clientWidth*i,behavior:"smooth"});
-  thumbs.forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
+
+// JS Functions from original code
+function goSlide(slideIndex, buttonElement) {
+    const slider = document.getElementById('slider');
+    const slideWidth = slider.clientWidth;
+    slider.scrollTo({
+        left: slideIndex * slideWidth,
+        behavior: 'smooth'
+    });
+    // Update active button
+    const buttons = document.querySelectorAll('.thumb-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
 }
 
-/* LANGUAGE SWITCH */
-function showLang(l){
-  english.style.display=l==="english"?"block":"none";
-  hindi.style.display=l==="hindi"?"block":"none";
+function showLang(lang) {
+    document.getElementById('english').style.display = 'none';
+    document.getElementById('hindi').style.display = 'none';
+    document.getElementById(lang).style.display = 'block';
 }
 </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Float Switch | RENUOVA</title>
+
+<style>
+body{
+  font-family:Roboto,Arial,sans-serif;
+  background:#f1f3f6;
+  margin:0;
+  padding:0;
+}
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  background:#fff;
+  display:flex;
+  padding:20px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  border-radius:4px;
+}
+@media(max-width:768px){
+  .container{flex-direction:column}
+}
+
+.image-section{
+  flex:1;
+  text-align:center;
+  border-right:1px solid #f0f0f0;
+  padding-right:20px;
+}
+@media(max-width:768px){
+  .image-section{border-right:none;padding-right:0}
+}
+.image-section img{
+  max-width:100%;
+  max-height:400px;
+  object-fit:contain;
+}
+
+.details-section{
+  flex:1.5;
+  padding-left:30px;
+}
+@media(max-width:768px){
+  .details-section{padding-left:0}
+}
+
+.product-title{
+  font-size:20px;
+  color:#212121;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+.rating{
+  background:#388e3c;
+  color:#fff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:3px;
+  font-weight:bold;
+}
+
+.price-row{
+  margin:15px 0;
+}
+.price{
+  font-size:28px;
+  font-weight:bold;
+  color:#212121;
+}
+
+.specs{
+  margin-top:20px;
+  border-top:1px solid #f0f0f0;
+  padding-top:10px;
+}
+.specs-item{
+  margin-bottom:8px;
+  font-size:15px;
+  font-weight:bold;
+  color:#000;
+}
+.label{
+  color:#878787;
+  width:100px;
+  display:inline-block;
+  font-weight:normal;
+}
+
+.btn-container{
+  margin-top:30px;
+}
+
+.buy-now{
+  background:#fb641b;
+  color:#fff;
+  border:none;
+  padding:18px 0;
+  width:250px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:2px;
+  text-decoration:none;
+  text-transform:uppercase;
+  text-align:center;
+  display:inline-block;
+}
+.buy-now:hover{
+  background:#f45100;
+  box-shadow:0 1px 2px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- IMAGE -->
+  <div class="image-section">
+    <img src="https://i.ibb.co/PsGrvTSR/Whats-App-Image-2026-01-10-at-8-21-22-PM.jpg" alt="Float Switch">
+  </div>
+
+  <!-- DETAILS -->
+  <div class="details-section">
+
+    <div class="product-title">
+      Float Switch 5V to 12V (High Quality Plastic)
+    </div>
+
+    <div>
+      <span class="rating">4.2 ★</span>
+      <span style="color:#878787;font-size:14px;margin-left:10px;font-weight:bold;">
+        Ratings & Reviews
+      </span>
+    </div>
+
+    <div class="price-row">
+      <span class="price">₹249</span>
+      <span style="color:#388e3c;font-size:14px;font-weight:bold;margin-left:10px;">
+        Special Price
+      </span>
+    </div>
+
+    <div class="specs">
+      <div class="specs-item"><span class="label">Work:</span> 5V to 12V</div>
+      <div class="specs-item"><span class="label">Type:</span> Plastic</div>
+      <div class="specs-item"><span class="label">Warranty:</span> No Warranty</div>
+      <div class="specs-item"><span class="label">Delivery:</span> Free Delivery</div>
+    </div>
+
+    <div class="btn-container">
+      <a class="buy-now" target="_blank"
+         href="https://wa.me/919229288001?text=HelloRenuova%20I%20want%20to%20buy%20Float%20Switch">
+        BUY NOW
+      </a>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2 Channel WiFi Switch | RENUOVA</title>
+
+<style>
+body{
+  font-family:Roboto,Arial,sans-serif;
+  background:#f1f3f6;
+  margin:0;
+  padding:0;
+}
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  background:#fff;
+  display:flex;
+  padding:20px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  border-radius:4px;
+}
+@media(max-width:768px){
+  .container{flex-direction:column}
+}
+
+.image-section{
+  flex:1;
+  text-align:center;
+  border-right:1px solid #f0f0f0;
+  padding-right:20px;
+}
+@media(max-width:768px){
+  .image-section{border-right:none;padding-right:0}
+}
+.image-section img{
+  max-width:100%;
+  max-height:400px;
+  object-fit:contain;
+}
+
+.details-section{
+  flex:1.5;
+  padding-left:30px;
+}
+@media(max-width:768px){
+  .details-section{padding-left:0}
+}
+
+.product-title{
+  font-size:20px;
+  color:#212121;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+.rating{
+  background:#388e3c;
+  color:#fff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:3px;
+  font-weight:bold;
+}
+
+.price-row{
+  margin:15px 0;
+}
+.price{
+  font-size:28px;
+  font-weight:bold;
+  color:#212121;
+}
+
+.specs{
+  margin-top:20px;
+  border-top:1px solid #f0f0f0;
+  padding-top:10px;
+}
+.specs-item{
+  margin-bottom:8px;
+  font-size:15px;
+  font-weight:bold;
+  color:#000;
+}
+.label{
+  color:#878787;
+  width:120px;
+  display:inline-block;
+  font-weight:normal;
+}
+
+.how-to-work {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 4px solid #2874f0;
+  margin-top: 15px;
+}
+
+.btn-container{
+  margin-top:30px;
+}
+
+.buy-now{
+  background:#fb641b;
+  color:#fff;
+  border:none;
+  padding:18px 0;
+  width:250px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:2px;
+  text-decoration:none;
+  text-transform:uppercase;
+  text-align:center;
+  display:inline-block;
+}
+.buy-now:hover{
+  background:#f45100;
+  box-shadow:0 1px 2px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- IMAGE -->
+  <div class="image-section">
+    <img src="https://i.ibb.co/6cQ7Mtxh/Whats-App-Image-2026-01-09-at-9-42-45-PM.jpg" alt="2 Channel WiFi Switch">
+  </div>
+
+  <!-- DETAILS -->
+  <div class="details-section">
+
+    <div class="product-title">
+      2 Channel WiFi Switch Smart Home Controller
+    </div>
+
+    <div>
+      <span class="rating">4.6 ★</span>
+      <span style="color:#878787;font-size:14px;margin-left:10px;font-weight:bold;">
+        Ratings & Reviews
+      </span>
+    </div>
+
+    <div class="price-row">
+      <span class="price">₹749</span>
+      <span style="color:#388e3c;font-size:14px;font-weight:bold;margin-left:10px;">
+        Special Price
+      </span>
+    </div>
+
+    <div class="specs">
+      <div class="specs-item"><span class="label">Work:</span> 220/30V</div>
+      <div class="specs-item"><span class="label">Channel:</span> 2 Channel</div>
+      <div class="specs-item"><span class="label">Range:</span> 5 Meter</div>
+      <div class="specs-item"><span class="label">Warranty:</span> No Warranty</div>
+      <div class="specs-item"><span class="label">Delivery:</span> Free Delivery</div>
+    </div>
+
+    <div class="how-to-work">
+      <div class="specs-item" style="color:#2874f0;">How to work:</div>
+      <div style="font-size:14px; color:#444;">First connect WiFi, then search IP address, then open page button.</div>
+    </div>
+
+    <div class="btn-container">
+      <a class="buy-now" target="_blank"
+         href="https://wa.me/919229288001?text=Hello%20Renuova%20Team,%20I%20want%20to%20buy%202%20Channel%20WiFi%20Switch">
+        BUY NOW
+      </a>
+    </div>
+
+  </div>
+</div>
 
 </body>
 </html>

@@ -2,672 +2,178 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>RENUOVA - Live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RENUOVA | AMS – Automatic Motor Switch</title>
-<!-- Flipkart uses Roboto font, imported here -->
-<link href="fonts.googleapis.com" rel="stylesheet">
+
+<!-- 1. Firebase ki Libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-/* Reset and base styles */
-*{margin:0;padding:0;box-sizing:border-box;font-family: 'Roboto', sans-serif;}
-body,html{background:#f1f3f6;color:#333;scroll-behavior:smooth}
-
-/* LOADER - Kept mostly same but color changed to Flipkart blue */
-#loader{
-  position:fixed;inset:0;background:#fff;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;z-index:9999
-}
-#loader h1{
-  font-size:3.5rem;color:#2874f0;letter-spacing:8px;
-  animation:glow 1.5s infinite alternate
-}
-@keyframes glow{
-  from{text-shadow:0 0 5px #2874f0}
-  to{text-shadow:0 0 25px #2874f0}
-}
-.progress-bar{width:280px;height:6px;background:#eee;margin-top:25px;border-radius:5px;overflow:hidden}
-.progress{height:100%;width:0;background:#2874f0;animation:load 3s forwards}
-@keyframes load{to{width:100%}}
-
-#main{display:none}
-
-/* HEADER - Flipkart Blue */
-.header{
-    text-align:center;
-    padding:18px;
-    background-color: #2874f0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.logo{font-size:34px;letter-spacing:6px;color:#fff;font-weight: 700;}
-
-/* CARD - White background, subtle shadow */
-.container{display:flex;justify-content:center;padding:20px 15px}
-.product-card{
-  max-width:1150px;width:100%;
-  display:flex;background:#fff;
-  border-radius:4px;overflow:hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-@media(max-width:900px){.product-card{flex-direction:column}}
-
-/* IMAGE - Background stays white */
-.image-box{flex:1.1;background:#fff;padding:30px;text-align:center; border-right: 1px solid #f1f3f6;}
-@media(max-width:900px){.image-box{border-right: none; border-bottom: 1px solid #f1f3f6;}}
-
-.slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
-.slider::-webkit-scrollbar{display:none}
-.slide{
-  min-width:100%;height:400px;
-  display:flex;align-items:center;justify-content:center;
-  scroll-snap-align:center
-}
-.slide img{
-  max-width:100%;max-height:100%;
-  /* Removed float animation as Flipkart images are static usually */
-}
-
-.thumbnail-gallery{display:flex;justify-content:center;gap:12px;margin-top:15px}
-.thumb-btn{
-  width:70px;height:70px;border-radius:4px;
-  border:2px solid #ccc;background:#fff;cursor:pointer;overflow:hidden;
-  transition: border-color 0.3s;
-}
-.thumb-btn.active{
-  border-color:#2874f0; /* Flipkart Blue */
-  box-shadow:0 0 10px rgba(40,116,240,0.3);
-}
-.thumb-btn img{width:100%;height:100%;object-fit:contain}
-
-/* DETAILS */
-.details-box{flex:1.5;padding:40px;color: #333;}
-.product-title{font-size:30px;color:#333; margin-bottom: 5px;}
-.tagline{color:#878787;font-style:normal;margin-bottom:10px;display:block;font-size: 14px;}
-.badge{
-  display:inline-block;margin:10px 0;padding:6px 14px;
-  background:#388e3c; /* A nice green for success/safety */
-  border-radius:4px;font-size:14px;color: #fff;
-}
-.rating{margin:10px 0;font-size:16px;color:#388e3c; font-weight: 500;} /* Flipkart green color for rating */
-.rating span{color:#878787;font-size:14px}
-
-/* TRUST */
-.trust-row{
-  display:flex;gap:12px;flex-wrap:wrap;margin:15px 0
-}
-.trust-badge{
-  background:#f0f8ff; /* Light blue background */
-  border:1px solid #2874f0;
-  padding:8px 14px;border-radius:4px;
-  font-size:14px;color:#2874f0;
-}
-
-/* LANGUAGE */
-.lang-switch{margin:20px 0}
-.lang-switch button{
-  padding:8px 18px;margin-right:10px;
-  border:none;border-radius:4px;
-  background:#2874f0;color:#fff;
-  font-weight:600;cursor:pointer;
-  transition: background-color 0.3s;
-}
-.lang-switch button:hover {
-    background-color: #1a56bf;
-}
-
-/* CONTENT */
-.description p,.description li{color:#555;line-height:1.7;margin-bottom:8px;font-size: 14px;}
-.description h3{margin-top:22px;color:#333;border-bottom: 1px solid #eee; padding-bottom: 5px;}
-#hindi{display:none}
-
-/* PRICE AREA */
-.price-area{
-  margin:25px 0;padding:0; /* No padding needed here */
-  background:none;border-radius:0;
-}
-.price{font-size:36px;font-weight:bold;color: #26a541;} /* Flipkart green for price */
-.mrp{text-decoration:line-through;color:#878787;margin-left:10px;font-size: 18px;}
-.discount{color:#388e3c;margin-left:10px;font-weight: 500;}
-
-/* BUY BUTTON */
-.buy-btn{
-  display:block;text-align:center;padding:18px;
-  background:#fb641b; /* Flipkart Orange for "Buy Now" */
-  color:#fff;
-  border-radius:4px;text-decoration:none;
-  font-size:20px;font-weight:bold;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,.2);
-  /* Removed pulse animation for cleaner look */
-  transition: background-color 0.3s;
-}
-
-.buy-btn:hover {
-    background-color: #ea540b;
-}
-
-/* MOBILE FIXED BAR */
-.mobile-buy-bar{display:none}
-@media(max-width:768px){
-  body{padding-bottom:75px}
-  .mobile-buy-bar{
-    display:flex;position:fixed;bottom:0;left:0;
-    width:100%;background:#fff;
-    border-top:1px solid #eee;
-    padding:10px;z-index:999;gap:10px;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-  }
-  .mobile-buy-bar .price{
-    flex:1;display:flex;
-    align-items:center;justify-content:center;
-    font-size:24px;color:#26a541;font-weight:bold;
-  }
-  .mobile-buy-bar a{
-    flex:1.5;background:#fb641b;
-    color:#fff;text-align:center;
-    padding:14px;border-radius:4px;
-    font-weight:bold;text-decoration:none;
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,.2);
-  }
-}
+/* Aapka purana saara design (CSS) yahan hai */
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#f1f3f6;}
+header{background:#2874f0;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:700;cursor:pointer;}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px;}
+.card{background:#fff;border-radius:10px;padding:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.1);transition:.2s;}
+.card:active{transform:scale(.97)}
+.card img{width:100%;height:170px;object-fit:contain;border-radius:8px;}
+.card h3{margin:6px 0 2px;font-size:15px;font-weight:600;}
+.card p{margin:0;color:#388e3c;font-weight:700;}
+.page{display:none;padding:12px}
+.slider{position:relative;background:#fff;padding:10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+.slider img{width:100%;height:280px;object-fit:contain;border-radius:10px;}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);background:#fff;color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+.left{left:8px}.right{right:8px}.hide{display:none}
+#pprice{color:#388e3c;font-size:20px;margin:6px 0;}
+.btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700;}
+.btn.dark{background:#2874f0}
+input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #ccc;}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px;}
+th,td{border:1px solid #ddd;padding:8px;text-align:center;}
+th{background:#f0f0f0}
 </style>
 </head>
 
 <body>
 
-<div id="loader">
-  <h1>RENUOVA</h1>
-  <div class="progress-bar"><div class="progress"></div></div>
+<header id="logo">RENUOVA</header>
+
+<div id="home" class="grid">Loading Products...</div>
+
+<div id="product" class="page">
+<button class="btn dark" onclick="goHome()">⬅ Back</button>
+<div class="slider">
+<img id="slideImg">
+<div class="arrow left" onclick="prevImg()">‹</div>
+<div class="arrow right" onclick="nextImg()">›</div>
+</div>
+<h2 id="pname"></h2>
+<h3 id="pprice"></h3>
+<p id="pdetails"></p>
+<p><b>Warranty:</b> <span id="pwarranty"></span></p>
+<a id="buy" class="btn" target="_blank">Buy on WhatsApp</a>
 </div>
 
-<div id="main">
-<header class="header"><div class="logo">RENUOVA</div></header>
-
-<div class="container">
-<div class="product-card">
-
-<div class="image-box">
-  <div class="slider" id="slider">
-    <!-- Make sure these image URLs are correct -->
-    <div class="slide"><img src="https://i.ibb.co/kgmNPpsz/instasquare-photoeditor-effect-cutout-20251219193556223.png"></div>
-    <div class="slide"><img src="https://i.ibb.co/8Lgk45Gy/instasquare-photoeditor-effect-cutout-20251219192722467.png"></div>
-    <div class="slide"><img src="https://i.ibb.co/93C0jyh3/DEVICE-DIGRAM.png"></div>
-  </div>
-
-  <div class="thumbnail-gallery">
-    <button class="thumb-btn active" onclick="goSlide(0,this)"><img src="https://i.ibb.co/kgmNPpsz/instasquare-photoeditor-effect-cutout-20251219193556223.png"></button>
-    <button class="thumb-btn" onclick="goSlide(1,this)"><img src="https://i.ibb.co/8Lgk45Gy/instasquare-photoeditor-effect-cutout-20251219192722467.png"></button>
-    <button class="thumb-btn" onclick="goSlide(2,this)"><img src="https://i.ibb.co/93C0jyh3/DEVICE-DIGRAM.png"></button>
-  </div>
+<div id="adminList" class="page">
+<h2>Admin – Product List</h2>
+<button class="btn dark" onclick="goHome()">⬅ Back</button>
+<button class="btn" onclick="addNew()">➕ Add New</button>
+<table>
+<thead><tr><th>No</th><th>Name</th><th>Price</th><th>Edit</th><th>Delete</th></tr></thead>
+<tbody id="plist"></tbody>
+</table>
 </div>
 
-<div class="details-box">
-<h1 class="product-title">AMS – Automatic Motor Switch</h1>
-<span class="tagline">Smart • Safe • Reliable Motor Control</span>
-<div class="badge">100% Electrical Safety</div>
-
-<div class="rating">★★★★★ ★★★★☆ <span>(4.3/5 based on 120+ users)</span></div>
-
-<div class="trust-row">
-  <div class="trust-badge">✅ 3 Months Warranty</div>
-  <div class="trust-badge">🚚 Free Delivery</div>
-  <div class="trust-badge">🔒 Shock Free Design</div>
-</div>
-
-<div class="lang-switch">
-<button onclick="showLang('english')">English</button>
-<button onclick="showLang('hindi')">हिंदी</button>
-</div>
-
-<!-- ENGLISH DETAILS -->
-<div id="english" class="description">
-<p>
-AMS is a smart automatic motor controller that switches OFF the motor automatically when the water tank is full.
-</p>
-
-<h3>⭐ Key Features</h3>
-<ul>
-<li>Automatic motor OFF when tank is full</li>
-<li>Plastic float switch – Zero electric current risk</li>
-<li>Shock-free design safe for family & kids</li>
-<li>Very low power consumption (Half Watt)</li>
-<li>Works with all single-phase water motors</li>
-</ul>
-
-<h3>🛡️ Benefits</h3>
-<ul>
-<li>Prevents water overflow and saves electricity</li>
-<li>Protects motor from dry run & overload</li>
-<li>Increases motor life</li>
-<li>Easy installation – no technician required</li>
-</ul>
-</div>
-
-<!-- HINDI DETAILS -->
-<div id="hindi" class="description">
-<p>
-AMS एक स्मार्ट ऑटोमैटिक मोटर कंट्रोल डिवाइस है जो टंकी भरते ही मोटर को अपने आप बंद कर देता है।
-</p>
-
-<h3>⭐ मुख्य फीचर्स</h3>
-<ul>
-<li>टंकी भरते ही मोटर ऑटोमैटिक बंद</li>
-<li>प्लास्टिक फ्लोट स्विच – करंट का कोई खतरा नहीं</li>
-<li>पूरी तरह शॉक-फ्री और सुरक्षित</li>
-<li>बहुत कम बिजली की खपत (आधा वाट)</li>
-<li>सभी सिंगल-फेज मोटर के लिए उपयुक्त</li>
-</ul>
-
-<h3>🛡️ फायदे</h3>
-<ul>
-<li>पानी और बिजली की बचत</li>
-<li>मोटर को जलने से बचाता है</li>
-<li>मोटर की उम्र बढ़ाता है</li>
-<li>लगाने में आसान</li>
-</ul>
-</div>
-
-<div class="price-area">
-<span class="price">₹999</span>
-<span class="mrp">₹1,999</span>
-<span class="discount">50% OFF</span>
-</div>
-
-<a class="buy-btn" target="_blank"
-href="https://wa.me/919229288001?text=Hello%20Renuova%20Team,%20I%20want%20to%20buy%20AMS%20Automatic%20Motor%20Switch">
-BUY NOW ON WHATSAPP
-</a>
-
-</div>
-</div>
-</div>
-</div>
-
-<!-- MOBILE BUY BAR -->
-<div class="mobile-buy-bar">
-<div class="price">₹999</div>
-<a target="_blank"
-href="https://wa.me/919229288001?text=Hello%20Renuova%20Team,%20I%20want%20to%20buy%20AMS%20Automatic%20Motor%20Switch">
-BUY NOW
-</a>
+<div id="adminEdit" class="page">
+<h2 id="formTitle"></h2>
+<button class="btn dark" onclick="openAdminList()">⬅ Back</button>
+<input id="aname" placeholder="Name">
+<input id="aprice" placeholder="Price">
+<input id="img1" placeholder="Image 1 URL">
+<input id="img2" placeholder="Image 2 URL">
+<input id="img3" placeholder="Image 3 URL">
+<input id="img4" placeholder="Image 4 URL">
+<textarea id="adetails" placeholder="Details"></textarea>
+<input id="awarranty" placeholder="Warranty">
+<button class="btn" onclick="save()">Save Live</button>
 </div>
 
 <script>
-setTimeout(()=>{
-  document.getElementById('loader').style.display="none";
-  document.getElementById('main').style.display="block";
-},3000);
+// 2. AAPKA FIREBASE CONFIG (Jo aapne photo bheji)
+const firebaseConfig = {
+  apiKey: "AIzaSyBzfvl9ZcvApNZf7kFih7oCvGkYLSAKm0",
+  authDomain: "nuova-87735.firebaseapp.com",
+  databaseURL: "https://nuova-87735-default-rtdb.firebaseio.com",
+  projectId: "nuova-87735",
+  storageBucket: "nuova-87735.firebasestorage.app",
+  messagingSenderId: "299058177938",
+  appId: "1:299058177938:web:a0bcf1a1d141fe7a58434b"
+};
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref("products");
 
-// JS Functions from original code
-function goSlide(slideIndex, buttonElement) {
-    const slider = document.getElementById('slider');
-    const slideWidth = slider.clientWidth;
-    slider.scrollTo({
-        left: slideIndex * slideWidth,
-        behavior: 'smooth'
+let products = [];
+let click=0, editIndex=null, slideIndex=0, currentImgs=[], startX=0;
+
+// --- DATABASE SE DATA UTHANA ---
+db.on("value", (snapshot) => {
+    products = snapshot.val() || [];
+    loadHome();
+    if(adminList.style.display === "block") renderList();
+});
+
+function loadHome(){
+    const homeDiv = document.getElementById("home");
+    homeDiv.innerHTML="";
+    if(products.length === 0) homeDiv.innerHTML = "No Products Found.";
+    products.forEach((x,i)=>{
+        homeDiv.innerHTML+=`
+        <div class="card" onclick="openP(${i})">
+        <img src="${x.imgs[0]}">
+        <h3>${x.n}</h3>
+        <p>${x.p}</p>
+        </div>`;
     });
-    // Update active button
-    const buttons = document.querySelectorAll('.thumb-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    buttonElement.classList.add('active');
 }
 
-function showLang(lang) {
-    document.getElementById('english').style.display = 'none';
-    document.getElementById('hindi').style.display = 'none';
-    document.getElementById(lang).style.display = 'block';
+window.openP=function(i){
+    document.getElementById("home").style.display="none";
+    document.getElementById("product").style.display="block";
+    slideIndex=0;
+    currentImgs=products[i].imgs;
+    document.getElementById("slideImg").src=currentImgs[0];
+    toggleArrow();
+    document.getElementById("pname").innerText=products[i].n;
+    document.getElementById("pprice").innerText=products[i].p;
+    document.getElementById("pdetails").innerText=products[i].d;
+    document.getElementById("pwarranty").innerText=products[i].w;
+    document.getElementById("buy").href=`https://wa.me/9229288001?text=Hello,%0AProduct:${products[i].n}`;
 }
+
+// --- SAVE FUNCTION (DATABASE ME JAYEGA) ---
+window.save = function(){
+    let imgs=[img1.value, img2.value, img3.value, img4.value].filter(x=>x);
+    let obj={n:aname.value, p:aprice.value, imgs:imgs.length?imgs:["https://picsum.photos/500"], d:adetails.value, w:awarranty.value};
+    
+    if(editIndex===null) products.push(obj);
+    else products[editIndex]=obj;
+
+    db.set(products).then(() => {
+        alert("Success: Duniya bhar ke liye Save ho gaya!");
+        openAdminList();
+    });
+}
+
+// --- DELETE FUNCTION ---
+window.del = function(i){
+    if(confirm("Khatam kar du? (Delete)")){
+        products.splice(i,1);
+        db.set(products);
+    }
+}
+
+// --- Baki UI Functions ---
+function toggleArrow(){
+    const l=document.querySelector(".left"), r=document.querySelector(".right");
+    if(currentImgs.length<=1){ l.classList.add("hide"); r.classList.add("hide"); }
+    else { l.classList.remove("hide"); r.classList.remove("hide"); }
+}
+window.nextImg=()=>{ slideIndex=(slideIndex+1)%currentImgs.length; document.getElementById("slideImg").src=currentImgs[slideIndex]; }
+window.prevImg=()=>{ slideIndex=(slideIndex-1+currentImgs.length)%currentImgs.length; document.getElementById("slideImg").src=currentImgs[slideIndex]; }
+window.goHome=()=>{ product.style.display="none"; adminList.style.display="none"; adminEdit.style.display="none"; home.style.display="grid"; }
+logo.onclick=()=>{ click++; if(click===10){ if(prompt("Password?")==="nitish20086"){ home.style.display="none"; adminList.style.display="block"; renderList(); } click=0; } }
+function renderList(){
+    plist.innerHTML="";
+    products.forEach((x,i)=>{
+        plist.innerHTML+=`<tr><td>${i+1}</td><td>${x.n}</td><td>${x.p}</td><td><button onclick="editProduct(${i})">Edit</button></td><td><button onclick="del(${i})">Del</button></td></tr>`;
+    });
+}
+window.editProduct=(i)=>{ editIndex=i; formTitle.innerText="Edit Product"; adminList.style.display="none"; adminEdit.style.display="block"; aname.value=products[i].n; aprice.value=products[i].p; img1.value=products[i].imgs[0]||""; adetails.value=products[i].d; awarranty.value=products[i].w; }
+window.addNew=()=>{ editIndex=null; formTitle.innerText="Add New"; adminList.style.display="none"; adminEdit.style.display="block"; aname.value=aprice.value=img1.value=img2.value=img3.value=img4.value=adetails.value=awarranty.value=""; }
+window.openAdminList=()=>{ adminEdit.style.display="none"; adminList.style.display="block"; renderList(); }
 </script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Float Switch | RENUOVA</title>
-
-<style>
-body{
-  font-family:Roboto,Arial,sans-serif;
-  background:#f1f3f6;
-  margin:0;
-  padding:0;
-}
-.container{
-  max-width:1000px;
-  margin:20px auto;
-  background:#fff;
-  display:flex;
-  padding:20px;
-  box-shadow:0 2px 4px rgba(0,0,0,0.1);
-  border-radius:4px;
-}
-@media(max-width:768px){
-  .container{flex-direction:column}
-}
-
-.image-section{
-  flex:1;
-  text-align:center;
-  border-right:1px solid #f0f0f0;
-  padding-right:20px;
-}
-@media(max-width:768px){
-  .image-section{border-right:none;padding-right:0}
-}
-.image-section img{
-  max-width:100%;
-  max-height:400px;
-  object-fit:contain;
-}
-
-.details-section{
-  flex:1.5;
-  padding-left:30px;
-}
-@media(max-width:768px){
-  .details-section{padding-left:0}
-}
-
-.product-title{
-  font-size:20px;
-  color:#212121;
-  margin-bottom:10px;
-  font-weight:bold;
-}
-
-.rating{
-  background:#388e3c;
-  color:#fff;
-  font-size:12px;
-  padding:2px 6px;
-  border-radius:3px;
-  font-weight:bold;
-}
-
-.price-row{
-  margin:15px 0;
-}
-.price{
-  font-size:28px;
-  font-weight:bold;
-  color:#212121;
-}
-
-.specs{
-  margin-top:20px;
-  border-top:1px solid #f0f0f0;
-  padding-top:10px;
-}
-.specs-item{
-  margin-bottom:8px;
-  font-size:15px;
-  font-weight:bold;
-  color:#000;
-}
-.label{
-  color:#878787;
-  width:100px;
-  display:inline-block;
-  font-weight:normal;
-}
-
-.btn-container{
-  margin-top:30px;
-}
-
-.buy-now{
-  background:#fb641b;
-  color:#fff;
-  border:none;
-  padding:18px 0;
-  width:250px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:2px;
-  text-decoration:none;
-  text-transform:uppercase;
-  text-align:center;
-  display:inline-block;
-}
-.buy-now:hover{
-  background:#f45100;
-  box-shadow:0 1px 2px rgba(0,0,0,0.2);
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <!-- IMAGE -->
-  <div class="image-section">
-    <img src="https://i.ibb.co/PsGrvTSR/Whats-App-Image-2026-01-10-at-8-21-22-PM.jpg" alt="Float Switch">
-  </div>
-
-  <!-- DETAILS -->
-  <div class="details-section">
-
-    <div class="product-title">
-      Float Switch 5V to 12V (High Quality Plastic)
-    </div>
-
-    <div>
-      <span class="rating">4.2 ★</span>
-      <span style="color:#878787;font-size:14px;margin-left:10px;font-weight:bold;">
-        Ratings & Reviews
-      </span>
-    </div>
-
-    <div class="price-row">
-      <span class="price">₹249</span>
-      <span style="color:#388e3c;font-size:14px;font-weight:bold;margin-left:10px;">
-        Special Price
-      </span>
-    </div>
-
-    <div class="specs">
-      <div class="specs-item"><span class="label">Work:</span> 5V to 12V</div>
-      <div class="specs-item"><span class="label">Type:</span> Plastic</div>
-      <div class="specs-item"><span class="label">Warranty:</span> No Warranty</div>
-      <div class="specs-item"><span class="label">Delivery:</span> Free Delivery</div>
-    </div>
-
-    <div class="btn-container">
-      <a class="buy-now" target="_blank"
-         href="https://wa.me/919229288001?text=HelloRenuova%20I%20want%20to%20buy%20Float%20Switch">
-        BUY NOW
-      </a>
-    </div>
-
-  </div>
-</div>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2 Channel WiFi Switch | RENUOVA</title>
-
-<style>
-body{
-  font-family:Roboto,Arial,sans-serif;
-  background:#f1f3f6;
-  margin:0;
-  padding:0;
-}
-.container{
-  max-width:1000px;
-  margin:20px auto;
-  background:#fff;
-  display:flex;
-  padding:20px;
-  box-shadow:0 2px 4px rgba(0,0,0,0.1);
-  border-radius:4px;
-}
-@media(max-width:768px){
-  .container{flex-direction:column}
-}
-
-.image-section{
-  flex:1;
-  text-align:center;
-  border-right:1px solid #f0f0f0;
-  padding-right:20px;
-}
-@media(max-width:768px){
-  .image-section{border-right:none;padding-right:0}
-}
-.image-section img{
-  max-width:100%;
-  max-height:400px;
-  object-fit:contain;
-}
-
-.details-section{
-  flex:1.5;
-  padding-left:30px;
-}
-@media(max-width:768px){
-  .details-section{padding-left:0}
-}
-
-.product-title{
-  font-size:20px;
-  color:#212121;
-  margin-bottom:10px;
-  font-weight:bold;
-}
-
-.rating{
-  background:#388e3c;
-  color:#fff;
-  font-size:12px;
-  padding:2px 6px;
-  border-radius:3px;
-  font-weight:bold;
-}
-
-.price-row{
-  margin:15px 0;
-}
-.price{
-  font-size:28px;
-  font-weight:bold;
-  color:#212121;
-}
-
-.specs{
-  margin-top:20px;
-  border-top:1px solid #f0f0f0;
-  padding-top:10px;
-}
-.specs-item{
-  margin-bottom:8px;
-  font-size:15px;
-  font-weight:bold;
-  color:#000;
-}
-.label{
-  color:#878787;
-  width:120px;
-  display:inline-block;
-  font-weight:normal;
-}
-
-.how-to-work {
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 4px;
-  border-left: 4px solid #2874f0;
-  margin-top: 15px;
-}
-
-.btn-container{
-  margin-top:30px;
-}
-
-.buy-now{
-  background:#fb641b;
-  color:#fff;
-  border:none;
-  padding:18px 0;
-  width:250px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:2px;
-  text-decoration:none;
-  text-transform:uppercase;
-  text-align:center;
-  display:inline-block;
-}
-.buy-now:hover{
-  background:#f45100;
-  box-shadow:0 1px 2px rgba(0,0,0,0.2);
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <!-- IMAGE -->
-  <div class="image-section">
-    <img src="https://i.ibb.co/6cQ7Mtxh/Whats-App-Image-2026-01-09-at-9-42-45-PM.jpg" alt="2 Channel WiFi Switch">
-  </div>
-
-  <!-- DETAILS -->
-  <div class="details-section">
-
-    <div class="product-title">
-      2 Channel WiFi Switch Smart Home Controller
-    </div>
-
-    <div>
-      <span class="rating">4.6 ★</span>
-      <span style="color:#878787;font-size:14px;margin-left:10px;font-weight:bold;">
-        Ratings & Reviews
-      </span>
-    </div>
-
-    <div class="price-row">
-      <span class="price">₹749</span>
-      <span style="color:#388e3c;font-size:14px;font-weight:bold;margin-left:10px;">
-        Special Price
-      </span>
-    </div>
-
-    <div class="specs">
-      <div class="specs-item"><span class="label">Work:</span> 220/30V</div>
-      <div class="specs-item"><span class="label">Channel:</span> 2 Channel</div>
-      <div class="specs-item"><span class="label">Range:</span> 5 Meter</div>
-      <div class="specs-item"><span class="label">Warranty:</span> No Warranty</div>
-      <div class="specs-item"><span class="label">Delivery:</span> Free Delivery</div>
-    </div>
-
-    <div class="how-to-work">
-      <div class="specs-item" style="color:#2874f0;">How to work:</div>
-      <div style="font-size:14px; color:#444;">First connect WiFi, then search IP address, then open page button.</div>
-    </div>
-
-    <div class="btn-container">
-      <a class="buy-now" target="_blank"
-         href="https://wa.me/919229288001?text=Hello%20Renuova%20Team,%20I%20want%20to%20buy%202%20Channel%20WiFi%20Switch">
-        BUY NOW
-      </a>
-    </div>
-
-  </div>
-</div>
 
 </body>
 </html>

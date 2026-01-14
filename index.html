@@ -8,9 +8,11 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!-- FontAwesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-/* ===== LOADING PAGE (ADDED ONLY) ===== */
+/* ===== LOADING PAGE ===== */
 #loadingScreen{
   position:fixed;
   inset:0;
@@ -55,97 +57,203 @@
 @keyframes fillWater{from{bottom:-100%}to{bottom:0}}
 @keyframes wave{from{transform:translateX(0)}to{transform:translateX(-50px)}}
 
-/* ===== ORIGINAL CSS (UNCHANGED) ===== */
+/* ===== ORIGINAL CSS ===== */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#f1f3f6;}
-header{background:#2874f0;color:#fff;padding:14px;text-align:center;font-size:22px;font-weight:700;cursor:pointer;}
+header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content: space-between; align-items: center; font-size:22px;font-weight:700; cursor: pointer; position: sticky; top:0; z-index: 100;}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px;}
 .card{background:#fff;border-radius:10px;padding:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.1);transition:.2s;}
 .card:active{transform:scale(.97)}
 .card img{width:100%;height:170px;object-fit:contain;border-radius:8px;}
-.card h3{margin:6px 0 2px;font-size:15px;font-weight:600;}
+.card h3{margin:6px 0 2px;font-size:15px;font-weight:600; color:#333;}
 .card p{margin:0;color:#388e3c;font-weight:700;}
 .page{display:none;padding:12px}
+
+/* POSTER SLIDER CSS */
+.home-poster-container { padding: 10px; display: block; }
+.poster-slider {
+    width: 100%; height: 180px; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+@media (min-width: 600px) { .poster-slider { height: 280px; } }
+.poster-slider img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Slider for Product Details */
 .slider{position:relative;background:#fff;padding:10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
 .slider img{width:100%;height:280px;object-fit:contain;border-radius:10px;}
-.arrow{position:absolute;top:50%;transform:translateY(-50%);background:#fff;color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3);}
-.left{left:8px}.right{right:8px}.hide{display:none}
-#pprice{color:#388e3c;font-size:20px;margin:6px 0;}
-.btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700;}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);background:#fff;color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3); z-index: 5;}
+.left{left:8px}.right{right:8px}
+
+/* BUTTONS */
+.btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700; border:none; width:100%; cursor:pointer;}
 .btn.dark{background:#2874f0}
-input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #ccc;}
-table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px;}
-th,td{border:1px solid #ddd;padding:8px;text-align:center;}
-th{background:#f0f0f0}
+.back-btn { width: auto !important; display: inline-block !important; padding: 8px 18px !important; font-size: 14px !important; margin-bottom: 10px !important; }
+
+input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:6px;border:1px solid #ccc; box-sizing: border-box; font-size: 14px;}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px; font-size: 11px;}
+th,td{border:1px solid #ddd;padding:6px;text-align:center;}
+
+/* CHAT CSS */
+#supportChatPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: none; flex-direction: column; }
+.chat-header { background: #2874f0; color: #fff; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+#chatMessages { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 14px; }
+.msg.user { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
+.msg.admin { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
+.chat-input-box { padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 8px; background:#fff;}
+.chat-input-box input { margin: 0; flex: 1; }
 </style>
 </head>
 
 <body>
 
-<!-- ===== LOADING SCREEN ===== -->
+<!-- LOADING SCREEN -->
 <div id="loadingScreen">
   <div class="loading-container">
-    <div class="loading-circle">
-      <div class="loading-water"></div>
-    </div>
+    <div class="loading-circle"><div class="loading-water"></div></div>
     <div class="loading-logo">RENUOVA</div>
   </div>
 </div>
 
-<!-- ===== ORIGINAL WEBSITE (UNCHANGED) ===== -->
 <div id="mainSite" style="display:none;">
 
-<header id="logo">RENUOVA</header>
+<header>
+    <div onclick="openSupport()" style="font-size: 14px; font-weight: normal;"><i class="fa fa-headset"></i> Support</div>
+    <div id="logo" onclick="goHome()">RENUOVA</div>
+    <div style="width: 60px;"></div>
+</header>
 
-<div id="home" class="grid">Loading Products...</div>
+<!-- HOME SECTION -->
+<div id="homeSection">
+    <div style="padding:10px;background:#f1f3f6;">
+      <input id="searchBox" type="search" placeholder="Search products..." onkeyup="searchProduct(event)">
+    </div>
+    <div class="home-poster-container">
+        <div class="poster-slider">
+            <img id="homePosterImg" src="https://via.placeholder.com/600x200?text=Mega+Sale+Offer">
+        </div>
+    </div>
+    <div id="home" class="grid">Loading...</div>
+</div>
 
+<!-- SUPPORT PAGE -->
+<div id="supportChatPage">
+    <div class="chat-header">
+        <i class="fa fa-arrow-left" onclick="closeSupport()"></i>
+        <span>Support Center</span>
+    </div>
+    <div id="chatMessages"></div>
+    <div class="chat-input-box">
+        <input type="text" id="userChatInput" placeholder="Write your problem...">
+        <button class="btn dark" style="margin:0; width:auto;" onclick="sendUserMsg()">Send</button>
+    </div>
+</div>
+
+<!-- PRODUCT PAGE -->
 <div id="product" class="page">
-<button class="btn dark" onclick="goHome()">⬅ Back</button>
-<div class="slider">
-<img id="slideImg">
-<div class="arrow left" onclick="prevImg()">‹</div>
-<div class="arrow right" onclick="nextImg()">›</div>
-</div>
-<h2 id="pname"></h2>
-<h3 id="pprice"></h3>
-<p id="pdetails"></p>
-<p><b>Warranty:</b> <span id="pwarranty"></span></p>
-<a id="buy" class="btn" target="_blank">Buy on WhatsApp</a>
+    <button class="btn dark back-btn" onclick="goHome()">⬅ Back</button>
+    <div class="slider">
+        <img id="slideImg">
+        <div class="arrow left" onclick="prevImg()">‹</div>
+        <div class="arrow right" onclick="nextImg()">›</div>
+    </div>
+    <div id="thumbBar" style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 0;"></div>
+    <h2 id="pname"></h2>
+    <h3 id="pprice"></h3>
+    <p id="pdetails"></p>
+    <p><b>Warranty:</b> <span id="pwarranty"></span></p>
+    <button class="btn" onclick="openCheckout()">Buy Now</button>
 </div>
 
+<!-- CHECKOUT PAGE -->
+<div id="checkoutPage" class="page" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:1500; overflow-y:auto; padding:20px; box-sizing:border-box;">
+    <button class="btn dark back-btn" onclick="closeCheckout()">⬅ Back</button>
+    <h2>Delivery Details</h2>
+    <p id="orderSummary" style="background:#eee; padding:12px; border-radius:8px; font-weight: bold;"></p>
+    
+    <input type="text" id="custName" placeholder="Full Name">
+    <input type="number" id="custPhone" placeholder="Phone Number">
+    <input type="text" id="custState" placeholder="State">
+    <input type="text" id="custDistrict" placeholder="District">
+    <input type="number" id="custPin" placeholder="Pincode">
+    <textarea id="custFullAddress" placeholder="Full Address with Landmark" rows="3"></textarea>
+    
+    <button class="btn" onclick="confirmOrder()">Confirm Order & WhatsApp</button>
+</div>
+
+<!-- ADMIN PANEL -->
 <div id="adminList" class="page">
-<h2>Admin – Product List</h2>
-<button class="btn dark" onclick="goHome()">⬅ Back</button>
-<button class="btn" onclick="addNew()">➕ Add New</button>
-<table>
-<thead><tr><th>No</th><th>Name</th><th>Price</th><th>Edit</th><th>Delete</th></tr></thead>
-<tbody id="plist"></tbody>
-</table>
+    <h2>Admin Panel</h2>
+    <div style="display:flex; gap:8px; flex-wrap: wrap;">
+        <button class="btn dark" onclick="goHome()">Back</button>
+        <button class="btn" onclick="addNew()">+ Product</button>
+        <button class="btn dark" onclick="showOrders()">Orders</button>
+        <button class="btn dark" onclick="showAdminSupport()">Chats</button>
+    </div>
+    <table>
+        <thead><tr><th>Name</th><th>Edit</th><th>Del</th></tr></thead>
+        <tbody id="plist"></tbody>
+    </table>
+    
+    <div style="background:#fff; padding:15px; border-radius:10px; margin-top:20px; border:1px solid #ddd;">
+        <h3>Update Banners</h3>
+        <input id="postUrl1" placeholder="Banner 1 URL">
+        <input id="postUrl2" placeholder="Banner 2 URL">
+        <button class="btn dark" onclick="savePosters()">Update Banners</button>
+    </div>
 </div>
 
+<!-- ADMIN ORDERS -->
+<div id="adminOrders" class="page">
+    <h2>All Orders</h2>
+    <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Details</th><th>X</th></tr></thead>
+            <tbody id="orderTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ADMIN SUPPORT -->
+<div id="adminSupportList" class="page">
+    <h2>Customer Chats</h2>
+    <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
+    <div id="chatListContainer"></div>
+</div>
+
+<!-- ADMIN REPLY -->
+<div id="adminReplyPage" class="page">
+    <button class="btn dark back-btn" onclick="showAdminSupport()">⬅ Back</button>
+    <div id="adminChatMessages" style="height: 400px; overflow-y: auto; background: #eee; padding: 15px; display: flex; flex-direction: column; gap: 10px;"></div>
+    <div class="chat-input-box">
+        <input type="text" id="adminReplyInput" placeholder="Reply...">
+        <button class="btn" style="margin:0;" onclick="sendAdminReply()">Reply</button>
+    </div>
+</div>
+
+<!-- ADMIN ADD/EDIT -->
 <div id="adminEdit" class="page">
-<h2 id="formTitle"></h2>
-<button class="btn dark" onclick="openAdminList()">⬅ Back</button>
-<input id="aname" placeholder="Name">
-<input id="aprice" placeholder="Price">
-<input id="img1" placeholder="Image 1 URL">
-<input id="img2" placeholder="Image 2 URL">
-<input id="img3" placeholder="Image 3 URL">
-<input id="img4" placeholder="Image 4 URL">
-<textarea id="adetails" placeholder="Details"></textarea>
-<input id="awarranty" placeholder="Warranty">
-<button class="btn" onclick="save()">Save Live</button>
+    <h2 id="formTitle"></h2>
+    <button class="btn dark" onclick="openAdminList()">⬅ Back</button>
+    <input id="aname" placeholder="Product Name">
+    <input id="aprice" placeholder="Price">
+    <input id="img1" placeholder="Image 1 URL">
+    <input id="img2" placeholder="Image 2 URL">
+    <input id="img3" placeholder="Image 3 URL">
+    <textarea id="adetails" placeholder="Product Details" rows="4"></textarea>
+    <input id="awarranty" placeholder="Warranty">
+    <button class="btn" onclick="save()">Save Product</button>
 </div>
 
 </div>
 
 <script>
-/* ===== LOADING LOGIC (ADDED ONLY) ===== */
+/* LOADING LOGIC */
 setTimeout(()=>{
   document.getElementById("loadingScreen").style.display="none";
   document.getElementById("mainSite").style.display="block";
-},3000);
+},2000);
 
-/* ===== ORIGINAL JS (UNCHANGED) ===== */
+/* FIREBASE CONFIG */
 const firebaseConfig={
  apiKey:"AIzaSyBzfvl9ZcvApNZf7kFih7oCvGkYLSAKm0",
  authDomain:"nuova-87735.firebaseapp.com",
@@ -157,47 +265,204 @@ const firebaseConfig={
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database().ref("products");
+const dbP=firebase.database().ref("posters");
+const dbO=firebase.database().ref("orders");
+const dbChat=firebase.database().ref("support_chats");
 
-let products=[],click=0,editIndex=null,slideIndex=0,currentImgs=[];
-db.on("value",(s)=>{products=s.val()||[];loadHome();if(adminList.style.display==="block")renderList();});
+let products=[], editIndex=null, slideIndex=0, currentImgs=[];
+let homePosters = ["https://via.placeholder.com/600x200"];
+let posterTick = 0;
+let selectedProduct = null;
+
+const myChatId = localStorage.getItem("renuova_chat_id") || "User_" + Math.floor(Math.random() * 1000000);
+localStorage.setItem("renuova_chat_id", myChatId);
+
+db.on("value",(s)=>{ products=s.val()||[]; loadHome(); if(adminList.style.display==="block") renderList(); });
+dbP.on("value", (s) => { if(s.val()){ homePosters = s.val(); updatePosterImage(); }});
+setInterval(() => { posterTick = (posterTick + 1) % homePosters.length; updatePosterImage(); }, 4000);
+function updatePosterImage() { const imgEl = document.getElementById("homePosterImg"); if(imgEl) imgEl.src = homePosters[posterTick]; }
 
 function loadHome(){
  home.innerHTML="";
- if(products.length===0) home.innerHTML="No Products Found.";
  products.forEach((x,i)=>{
- home.innerHTML+=`<div class="card" onclick="openP(${i})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`;
+  home.innerHTML+=`<div class="card" onclick="openP(${i})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`;
  });
 }
+
 window.openP=function(i){
- home.style.display="none";product.style.display="block";
- slideIndex=0;currentImgs=products[i].imgs;
- slideImg.src=currentImgs[0];
+ homeSection.style.display="none";
+ product.style.display="block";
+ selectedProduct = products[i];
+ currentImgs=products[i].imgs;
+ slideIndex=0;
+ thumbBar.innerHTML = "";
+ currentImgs.forEach((imgSrc, idx) => {
+     let t = document.createElement("img");
+     t.src = imgSrc; t.style = "width:60px; height:60px; object-fit:contain; border:2px solid #ddd; border-radius:5px; flex-shrink:0; cursor:pointer;";
+     t.onclick = () => { slideIndex=idx; updateUI(); };
+     thumbBar.appendChild(t);
+ });
+ updateUI();
  pname.innerText=products[i].n;
  pprice.innerText=products[i].p;
  pdetails.innerText=products[i].d;
  pwarranty.innerText=products[i].w;
- buy.href=`https://wa.me/9229288001?text=Hello,%0AProduct:${products[i].n}`;
- toggleArrow();
 }
-function toggleArrow(){
- if(currentImgs.length<=1){document.querySelector(".left").classList.add("hide");document.querySelector(".right").classList.add("hide");}
- else{document.querySelector(".left").classList.remove("hide");document.querySelector(".right").classList.remove("hide");}
+function updateUI() { slideImg.src = currentImgs[slideIndex]; }
+
+/* ORDER LOGIC - FIXED */
+window.openCheckout = () => {
+    document.getElementById("orderSummary").innerText = "Ordering: " + selectedProduct.n + " (" + selectedProduct.p + ")";
+    document.getElementById("checkoutPage").style.display = "block";
 }
-window.nextImg=()=>{slideIndex=(slideIndex+1)%currentImgs.length;slideImg.src=currentImgs[slideIndex];}
-window.prevImg=()=>{slideIndex=(slideIndex-1+currentImgs.length)%currentImgs.length;slideImg.src=currentImgs[slideIndex];}
-window.goHome=()=>{product.style.display="none";adminList.style.display="none";adminEdit.style.display="none";home.style.display="grid";}
-logo.onclick=()=>{click++;if(click===10){if(prompt("Password?")==="nitish20086"){home.style.display="none";adminList.style.display="block";renderList();}click=0;}}
+window.closeCheckout = () => { document.getElementById("checkoutPage").style.display = "none"; }
+
+window.confirmOrder = () => {
+    let name = document.getElementById("custName").value;
+    let phone = document.getElementById("custPhone").value;
+    let state = document.getElementById("custState").value;
+    let dist = document.getElementById("custDistrict").value;
+    let pin = document.getElementById("custPin").value;
+    let addr = document.getElementById("custFullAddress").value;
+
+    if(!name || !phone || !state || !dist || !pin || !addr) return alert("Please fill all details!");
+
+    let order = { 
+        productName: selectedProduct.n, 
+        price: selectedProduct.p, 
+        customerName: name, 
+        phone: phone, 
+        state: state,
+        district: dist,
+        pincode: pin,
+        address: addr, 
+        date: new Date().toLocaleString() 
+    };
+
+    dbO.push(order).then(() => {
+        // WhatsApp Message with Full Details
+        let msg = `*🛍️ NEW ORDER CONFIRMED* %0A%0A` +
+                  `*Product:* ${selectedProduct.n}%0A` +
+                  `*Price:* ${selectedProduct.p}%0A%0A` +
+                  `*--- Customer Details ---*%0A` +
+                  `*Name:* ${name}%0A` +
+                  `*Phone:* ${phone}%0A` +
+                  `*District:* ${dist}%0A` +
+                  `*State:* ${state}%0A` +
+                  `*Pincode:* ${pin}%0A` +
+                  `*Address:* ${addr}%0A%0A` +
+                  `*Date:* ${order.date}`;
+                  
+        window.open(`https://wa.me/9229288001?text=${msg}`);
+        closeCheckout();
+        goHome();
+        alert("Order Successful!");
+    });
+}
+
+/* ADMIN ORDERS VIEW */
+window.showOrders = () => {
+    adminList.style.display = "none";
+    document.getElementById("adminOrders").style.display = "block";
+    dbO.on("value", (s) => {
+        let orders = s.val();
+        let html = "";
+        for(let k in orders) { 
+            let o = orders[k];
+            html += `<tr>
+                <td>${o.date}</td>
+                <td>${o.productName}</td>
+                <td>${o.customerName}</td>
+                <td>${o.district}, ${o.state} (${o.pincode}) - ${o.address}</td>
+                <td><button onclick="delOrder('${k}')">X</button></td>
+            </tr>`; 
+        }
+        document.getElementById("orderTableBody").innerHTML = html || "<tr><td colspan='5'>No Orders</td></tr>";
+    });
+}
+window.delOrder = (id) => { if(confirm("Delete Order?")) dbO.child(id).remove(); }
+
+/* --- OTHER FUNCTIONS --- */
+function openSupport() { document.getElementById("supportChatPage").style.display = "flex"; loadUserMessages(); }
+function closeSupport() { document.getElementById("supportChatPage").style.display = "none"; }
+function loadUserMessages() {
+    dbChat.child(myChatId).on("value", (s) => {
+        const data = s.val(); const msgDiv = document.getElementById("chatMessages");
+        msgDiv.innerHTML = "";
+        if(data && data.messages) {
+            Object.values(data.messages).forEach(m => { msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; });
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+        }
+    });
+}
+function sendUserMsg() {
+    const input = document.getElementById("userChatInput"); if(!input.value) return;
+    dbChat.child(myChatId).child("messages").push({ sender: "user", text: input.value, time: Date.now() });
+    dbChat.child(myChatId).update({ lastMsg: input.value, chatId: myChatId, lastTime: Date.now() });
+    input.value = "";
+}
+
+window.goHome=()=>{ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); homeSection.style.display="block"; }
+
+let clickCount = 0;
+document.getElementById("logo").onclick=()=>{
+    clickCount++;
+    if(clickCount===10){
+        if(prompt("Admin Password?")==="nitish20086"){ homeSection.style.display="none"; adminList.style.display="block"; renderList(); }
+        clickCount=0;
+    }
+}
+
 function renderList(){
  plist.innerHTML="";
  products.forEach((x,i)=>{
- plist.innerHTML+=`<tr><td>${i+1}</td><td>${x.n}</td><td>${x.p}</td><td><button onclick="editProduct(${i})">Edit</button></td><td><button onclick="del(${i})">Del</button></td></tr>`;
+  plist.innerHTML+=`<tr><td>${x.n}</td><td><button onclick="editProduct(${i})">Edit</button></td><td><button onclick="del(${i})">X</button></td></tr>`;
  });
 }
-window.editProduct=(i)=>{editIndex=i;formTitle.innerText="Edit Product";adminList.style.display="none";adminEdit.style.display="block";aname.value=products[i].n;aprice.value=products[i].p;img1.value=products[i].imgs[0]||"";adetails.value=products[i].d;awarranty.value=products[i].w;}
-window.addNew=()=>{editIndex=null;formTitle.innerText="Add New";adminList.style.display="none";adminEdit.style.display="block";aname.value=aprice.value=img1.value=img2.value=img3.value=img4.value=adetails.value=awarranty.value="";}
-window.openAdminList=()=>{adminEdit.style.display="none";adminList.style.display="block";renderList();}
-window.del=(i)=>{if(confirm("Khatam kar du?")){products.splice(i,1);db.set(products);}}
-window.save=()=>{let imgs=[img1.value,img2.value,img3.value,img4.value].filter(x=>x);let obj={n:aname.value,p:aprice.value,imgs:imgs.length?imgs:["https://picsum.photos/500"],d:adetails.value,w:awarranty.value};if(editIndex===null)products.push(obj);else products[editIndex]=obj;db.set(products).then(()=>{alert("Saved");openAdminList();});}
+
+window.savePosters = () => {
+    let p1 = document.getElementById("postUrl1").value;
+    let p2 = document.getElementById("postUrl2").value;
+    dbP.set([p1, p2]).then(() => alert("Banners Updated"));
+}
+
+window.editProduct=(i)=>{editIndex=i;formTitle.innerText="Edit Product";adminList.style.display="none";adminEdit.style.display="block";aname.value=products[i].n;aprice.value=products[i].p;img1.value=products[i].imgs[0]||"";img2.value=products[i].imgs[1]||"";img3.value=products[i].imgs[2]||"";adetails.value=products[i].d;awarranty.value=products[i].w;}
+window.addNew=()=>{editIndex=null;formTitle.innerText="Add New Product";adminList.style.display="none";adminEdit.style.display="block";aname.value=aprice.value=img1.value=img2.value=img3.value=adetails.value=awarranty.value="";}
+window.openAdminList=()=>{ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); adminList.style.display="block"; renderList(); }
+window.del=(i)=>{if(confirm("Delete?")){products.splice(i,1);db.set(products);}}
+window.save=()=>{let imgs=[img1.value,img2.value,img3.value].filter(x=>x);let obj={n:aname.value,p:aprice.value,imgs:imgs.length?imgs:["https://picsum.photos/500"],d:adetails.value,w:awarranty.value};if(editIndex===null)products.push(obj);else products[editIndex]=obj;db.set(products).then(()=>{alert("Saved");openAdminList();});}
+
+function searchProduct(e){
+  let q = e.target.value.toLowerCase();
+  let filtered = products.filter(p => p.n.toLowerCase().includes(q));
+  home.innerHTML = "";
+  filtered.forEach((x,i)=>{ home.innerHTML += `<div class="card" onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`; });
+}
+function prevImg(){ slideIndex = (slideIndex-1+currentImgs.length)%currentImgs.length; updateUI(); }
+function nextImg(){ slideIndex = (slideIndex+1)%currentImgs.length; updateUI(); }
+
+/* ADMIN CHAT LOGIC */
+let activeAdminChat = "";
+function showAdminSupport() {
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    document.getElementById("adminSupportList").style.display = "block";
+    dbChat.on("value", (s) => {
+        const chats = s.val(); const container = document.getElementById("chatListContainer"); container.innerHTML = "";
+        for(let id in chats) { container.innerHTML += `<div class="admin-chat-card" onclick="openAdminReply('${id}')"><b>${id}</b><br><small>${chats[id].lastMsg}</small></div>`; }
+    });
+}
+function openAdminReply(id) {
+    activeAdminChat = id; document.getElementById("adminSupportList").style.display = "none"; document.getElementById("adminReplyPage").style.display = "block";
+    dbChat.child(id).child("messages").on("value", (s) => {
+        const msgDiv = document.getElementById("adminChatMessages"); msgDiv.innerHTML = "";
+        const msgs = s.val(); if(msgs) { Object.values(msgs).forEach(m => { msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; }); msgDiv.scrollTop = msgDiv.scrollHeight; }
+    });
+}
+function sendAdminReply() {
+    const input = document.getElementById("adminReplyInput"); if(!input.value) return;
+    dbChat.child(activeAdminChat).child("messages").push({ sender: "admin", text: input.value, time: Date.now() });
+    input.value = "";
+}
 </script>
 
 </body>

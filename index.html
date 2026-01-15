@@ -96,10 +96,24 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 .chat-header { background: #2874f0; color: #fff; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
 #chatMessages { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
 .msg { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 14px; }
-.msg.user { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
-.msg.admin { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
+
+/* User View: User right, Admin left */
+#chatMessages .msg.user { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
+#chatMessages .msg.admin { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
+
+/* Admin View Logic (Inverted) */
+#adminChatMessages .msg.admin { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
+#adminChatMessages .msg.user { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
+
 .chat-input-box { padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 8px; background:#fff;}
 .chat-input-box input { margin: 0; flex: 1; }
+
+/* Admin Chat Card Styling */
+.admin-chat-card { 
+    background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 8px; 
+    display: flex; justify-content: space-between; align-items: center; 
+}
+.btn-delete-chat { background: #d32f2f; color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; }
 </style>
 </head>
 
@@ -217,7 +231,7 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 <div id="adminSupportList" class="page">
     <h2>Customer Chats</h2>
     <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
-    <div id="chatListContainer"></div>
+    <div id="chatListContainer" style="padding:10px;"></div>
 </div>
 
 <!-- ADMIN REPLY -->
@@ -310,7 +324,7 @@ window.openP=function(i){
 }
 function updateUI() { slideImg.src = currentImgs[slideIndex]; }
 
-/* ORDER LOGIC - FIXED */
+/* ORDER LOGIC */
 window.openCheckout = () => {
     document.getElementById("orderSummary").innerText = "Ordering: " + selectedProduct.n + " (" + selectedProduct.p + ")";
     document.getElementById("checkoutPage").style.display = "block";
@@ -340,19 +354,13 @@ window.confirmOrder = () => {
     };
 
     dbO.push(order).then(() => {
-        // WhatsApp Message with Full Details
         let msg = `*🛍️ NEW ORDER CONFIRMED* %0A%0A` +
                   `*Product:* ${selectedProduct.n}%0A` +
                   `*Price:* ${selectedProduct.p}%0A%0A` +
-                  `*--- Customer Details ---*%0A` +
                   `*Name:* ${name}%0A` +
                   `*Phone:* ${phone}%0A` +
-                  `*District:* ${dist}%0A` +
-                  `*State:* ${state}%0A` +
-                  `*Pincode:* ${pin}%0A` +
                   `*Address:* ${addr}%0A%0A` +
                   `*Date:* ${order.date}`;
-                  
         window.open(`https://wa.me/9229288001?text=${msg}`);
         closeCheckout();
         goHome();
@@ -360,7 +368,7 @@ window.confirmOrder = () => {
     });
 }
 
-/* ADMIN ORDERS VIEW */
+/* ADMIN ORDERS */
 window.showOrders = () => {
     adminList.style.display = "none";
     document.getElementById("adminOrders").style.display = "block";
@@ -373,7 +381,7 @@ window.showOrders = () => {
                 <td>${o.date}</td>
                 <td>${o.productName}</td>
                 <td>${o.customerName}</td>
-                <td>${o.district}, ${o.state} (${o.pincode}) - ${o.address}</td>
+                <td>${o.district}, ${o.state} - ${o.address}</td>
                 <td><button onclick="delOrder('${k}')">X</button></td>
             </tr>`; 
         }
@@ -382,9 +390,10 @@ window.showOrders = () => {
 }
 window.delOrder = (id) => { if(confirm("Delete Order?")) dbO.child(id).remove(); }
 
-/* --- OTHER FUNCTIONS --- */
+/* --- CUSTOMER SUPPORT --- */
 function openSupport() { document.getElementById("supportChatPage").style.display = "flex"; loadUserMessages(); }
 function closeSupport() { document.getElementById("supportChatPage").style.display = "none"; }
+
 function loadUserMessages() {
     dbChat.child(myChatId).on("value", (s) => {
         const data = s.val(); const msgDiv = document.getElementById("chatMessages");
@@ -396,12 +405,75 @@ function loadUserMessages() {
     });
 }
 function sendUserMsg() {
-    const input = document.getElementById("userChatInput"); if(!input.value) return;
+    const input = document.getElementById("userChatInput"); if(!input.value.trim()) return;
     dbChat.child(myChatId).child("messages").push({ sender: "user", text: input.value, time: Date.now() });
     dbChat.child(myChatId).update({ lastMsg: input.value, chatId: myChatId, lastTime: Date.now() });
     input.value = "";
 }
 
+/* --- ADMIN CHAT LOGIC --- */
+let activeAdminChat = "";
+
+function showAdminSupport() {
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    document.getElementById("adminSupportList").style.display = "block";
+    dbChat.on("value", (s) => {
+        const chats = s.val(); 
+        const container = document.getElementById("chatListContainer"); 
+        container.innerHTML = "";
+        if(!chats) { container.innerHTML = "No active chats."; return; }
+        
+        for(let id in chats) { 
+            container.innerHTML += `
+            <div class="admin-chat-card">
+                <div onclick="openAdminReply('${id}')" style="flex:1; cursor:pointer;">
+                    <b>${id}</b><br>
+                    <small>${chats[id].lastMsg}</small>
+                </div>
+                <button class="btn-delete-chat" onclick="deleteChat(event, '${id}')"><i class="fa fa-trash"></i></button>
+            </div>`; 
+        }
+    });
+}
+
+function deleteChat(event, id) {
+    event.stopPropagation();
+    if(confirm("Are you sure you want to delete this conversation?")) {
+        dbChat.child(id).remove().then(() => alert("Chat Deleted"));
+    }
+}
+
+function openAdminReply(id) {
+    activeAdminChat = id; 
+    document.getElementById("adminSupportList").style.display = "none"; 
+    document.getElementById("adminReplyPage").style.display = "block";
+    dbChat.child(id).child("messages").on("value", (s) => {
+        const msgDiv = document.getElementById("adminChatMessages"); 
+        msgDiv.innerHTML = "";
+        const msgs = s.val(); 
+        if(msgs) { 
+            Object.values(msgs).forEach(m => { 
+                msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; 
+            }); 
+            msgDiv.scrollTop = msgDiv.scrollHeight; 
+        }
+    });
+}
+
+function sendAdminReply() {
+    const input = document.getElementById("adminReplyInput"); 
+    if(!input.value.trim()) return;
+    
+    // Push message to history
+    dbChat.child(activeAdminChat).child("messages").push({ sender: "admin", text: input.value, time: Date.now() });
+    
+    // Update last message in the list
+    dbChat.child(activeAdminChat).update({ lastMsg: "You: " + input.value, lastTime: Date.now() });
+    
+    input.value = "";
+}
+
+/* --- PRODUCT & BANNER ADMIN --- */
 window.goHome=()=>{ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); homeSection.style.display="block"; }
 
 let clickCount = 0;
@@ -440,29 +512,6 @@ function searchProduct(e){
 }
 function prevImg(){ slideIndex = (slideIndex-1+currentImgs.length)%currentImgs.length; updateUI(); }
 function nextImg(){ slideIndex = (slideIndex+1)%currentImgs.length; updateUI(); }
-
-/* ADMIN CHAT LOGIC */
-let activeAdminChat = "";
-function showAdminSupport() {
-    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-    document.getElementById("adminSupportList").style.display = "block";
-    dbChat.on("value", (s) => {
-        const chats = s.val(); const container = document.getElementById("chatListContainer"); container.innerHTML = "";
-        for(let id in chats) { container.innerHTML += `<div class="admin-chat-card" onclick="openAdminReply('${id}')"><b>${id}</b><br><small>${chats[id].lastMsg}</small></div>`; }
-    });
-}
-function openAdminReply(id) {
-    activeAdminChat = id; document.getElementById("adminSupportList").style.display = "none"; document.getElementById("adminReplyPage").style.display = "block";
-    dbChat.child(id).child("messages").on("value", (s) => {
-        const msgDiv = document.getElementById("adminChatMessages"); msgDiv.innerHTML = "";
-        const msgs = s.val(); if(msgs) { Object.values(msgs).forEach(m => { msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; }); msgDiv.scrollTop = msgDiv.scrollHeight; }
-    });
-}
-function sendAdminReply() {
-    const input = document.getElementById("adminReplyInput"); if(!input.value) return;
-    dbChat.child(activeAdminChat).child("messages").push({ sender: "admin", text: input.value, time: Date.now() });
-    input.value = "";
-}
 </script>
 
 </body>

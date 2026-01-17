@@ -2,117 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RENUOVA - Live</title>
+<title>RENUOVA - Official Store</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-<!-- FontAwesome for Icons -->
+<!-- FontAwesome & Google Fonts -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-/* ===== LOADING PAGE ===== */
-#loadingScreen{
-  position:fixed;
-  inset:0;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
+/* ===== NEW PREMIUM LOADING PAGE ===== */
+#loader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    font-family: 'Inter', sans-serif;
 }
-.loading-container{text-align:center;}
-.loading-circle{
-  width:140px;height:140px;
-  border:4px solid #007bff;
-  border-radius:50%;
-  position:relative;
-  overflow:hidden;
-  margin:0 auto 20px;
+.particles {
+    position: absolute;
+    width: 100%; height: 100%;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.1;
+    animation: moveBg 20s linear infinite;
 }
-.loading-water{
-  position:absolute;
-  bottom:-100%;
-  width:100%;
-  height:100%;
-  background:#007bff;
-  animation:fillWater 3s ease-in-out forwards;
+@keyframes moveBg {
+    from { background-position: 0 0; }
+    to { background-position: 500px 500px; }
 }
-.loading-water::before{
-  content:"";
-  position:absolute;
-  top:-10px;left:-20%;
-  width:140%;height:20px;
-  background:rgba(255,255,255,.5);
-  border-radius:50%;
-  animation:wave 1s linear infinite;
+.brand-name {
+    display: flex;
+    gap: 5px;
+    letter-spacing: 15px;
+    animation: squeeze 1.5s ease-out forwards;
 }
-.loading-logo{
-  font-size:40px;
-  font-weight:700;
-  letter-spacing:5px;
-  color:#007bff;
+.letter {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    display: inline-block;
+    opacity: 0;
+    filter: blur(10px);
+    animation: reveal 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+    text-shadow: 0 0 30px rgba(56, 189, 248, 0.8);
 }
-@keyframes fillWater{from{bottom:-100%}to{bottom:0}}
-@keyframes wave{from{transform:translateX(0)}to{transform:translateX(-50px)}}
+.letter:nth-child(1) { animation-delay: 0.1s; color: #38bdf8; }
+.letter:nth-child(2) { animation-delay: 0.2s; }
+.letter:nth-child(3) { animation-delay: 0.3s; }
+.letter:nth-child(4) { animation-delay: 0.4s; }
+.letter:nth-child(5) { animation-delay: 0.5s; }
+.letter:nth-child(6) { animation-delay: 0.6s; }
+.letter:nth-child(7) { animation-delay: 0.7s; color: #38bdf8; }
 
-/* ===== ORIGINAL CSS ===== */
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#f1f3f6;}
-header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content: space-between; align-items: center; font-size:22px;font-weight:700; cursor: pointer; position: sticky; top:0; z-index: 100;}
+.loader-line-container {
+    width: 250px; height: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+}
+.loader-line {
+    position: absolute;
+    height: 100%; width: 40%;
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+    animation: lineMove 1.5s infinite ease-in-out;
+}
+@keyframes reveal { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+@keyframes squeeze { to { letter-spacing: 5px; } }
+@keyframes lineMove { 0% { left: -100%; } 100% { left: 100%; } }
+
+/* ===== UI CSS ===== */
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#f1f3f6; color:#333;}
+header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content: space-between; align-items: center; font-size:20px;font-weight:700; position: sticky; top:0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px;}
 .card{background:#fff;border-radius:10px;padding:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.1);transition:.2s;}
 .card:active{transform:scale(.97)}
 .card img{width:100%;height:170px;object-fit:contain;border-radius:8px;}
-.card h3{margin:6px 0 2px;font-size:15px;font-weight:600; color:#333;}
+.card h3{margin:6px 0 2px;font-size:15px;font-weight:600; color:#333; height: 36px; overflow: hidden;}
 .card p{margin:0;color:#388e3c;font-weight:700;}
-.page{display:none;padding:12px}
 
-/* POSTER SLIDER CSS */
+.page{display:none;padding:12px; animation: fadeIn 0.3s;}
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+
+/* POSTER SLIDER */
 .home-poster-container { padding: 10px; display: block; }
-.poster-slider {
-    width: 100%; height: 180px; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+.poster-slider { width: 100%; height: 180px; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 @media (min-width: 600px) { .poster-slider { height: 280px; } }
 .poster-slider img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Slider for Product Details */
-.slider{position:relative;background:#fff;padding:10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+/* PRODUCT DETAILS SLIDER */
+.slider{position:relative;background:#fff;padding:10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1); text-align: center;}
 .slider img{width:100%;height:280px;object-fit:contain;border-radius:10px;}
-.arrow{position:absolute;top:50%;transform:translateY(-50%);background:#fff;color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3); z-index: 5;}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.8);color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3); z-index: 5;}
 .left{left:8px}.right{right:8px}
 
 /* BUTTONS */
-.btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700; border:none; width:100%; cursor:pointer;}
+.btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700; border:none; width:100%; cursor:pointer; font-size: 16px;}
 .btn.dark{background:#2874f0}
+.btn.cart-btn{background:#ff9f00; margin-bottom: 5px;}
 .back-btn { width: auto !important; display: inline-block !important; padding: 8px 18px !important; font-size: 14px !important; margin-bottom: 10px !important; }
 
 input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:6px;border:1px solid #ccc; box-sizing: border-box; font-size: 14px;}
 table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px; font-size: 11px;}
 th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 
+/* AUTH & CART PAGES */
+#authPage, #cartPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2500; display: none; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+.badge { background: #ff3f6c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; vertical-align: middle; margin-left: 3px; border: 1px solid #fff; }
+
 /* CHAT CSS */
 #supportChatPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: none; flex-direction: column; }
 .chat-header { background: #2874f0; color: #fff; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
 #chatMessages { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
 .msg { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 14px; }
-
-/* User View: User right, Admin left */
-#chatMessages .msg.user { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
-#chatMessages .msg.admin { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
-
-/* Admin View Logic (Inverted) */
-#adminChatMessages .msg.admin { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
-#adminChatMessages .msg.user { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
-
+.msg.user { align-self: flex-end; background: #2874f0; color: #fff; border-bottom-right-radius: 2px; }
+.msg.admin { align-self: flex-start; background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
 .chat-input-box { padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 8px; background:#fff;}
 .chat-input-box input { margin: 0; flex: 1; }
 
-/* Admin Chat Card Styling */
-.admin-chat-card { 
-    background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 8px; 
-    display: flex; justify-content: space-between; align-items: center; 
-}
+.admin-chat-card { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 .btn-delete-chat { background: #d32f2f; color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; }
 </style>
 </head>
@@ -120,19 +138,31 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 <body>
 
 <!-- LOADING SCREEN -->
-<div id="loadingScreen">
-  <div class="loading-container">
-    <div class="loading-circle"><div class="loading-water"></div></div>
-    <div class="loading-logo">RENUOVA</div>
-  </div>
+<div id="loader">
+    <div class="particles"></div>
+    <div class="brand-name">
+        <span class="letter">R</span>
+        <span class="letter">E</span>
+        <span class="letter">N</span>
+        <span class="letter">U</span>
+        <span class="letter">O</span>
+        <span class="letter">V</span>
+        <span class="letter">A</span>
+    </div>
+    <div class="loader-line-container">
+        <div class="loader-line"></div>
+    </div>
 </div>
 
-<div id="mainSite" style="display:none;">
+<div id="mainSite" style="display:none; opacity: 0; transition: opacity 1s ease;">
 
 <header>
-    <div onclick="openSupport()" style="font-size: 14px; font-weight: normal;"><i class="fa fa-headset"></i> Support</div>
-    <div id="logo" onclick="goHome()">RENUOVA</div>
-    <div style="width: 60px;"></div>
+    <div onclick="openSupport()" style="font-size: 13px; font-weight: normal; cursor: pointer;"><i class="fa fa-headset"></i> Support</div>
+    <div id="logo" onclick="goHome()" style="cursor: pointer; letter-spacing: 2px;">RENUOVA</div>
+    <div style="display: flex; gap: 12px; align-items: center; font-size: 16px;">
+        <div onclick="openCart()" style="cursor: pointer;"><i class="fa fa-shopping-cart"></i><span id="cartCount" class="badge">0</span></div>
+        <div id="userBtn" onclick="openAuth()" style="cursor: pointer; font-size: 14px; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;"><i class="fa fa-user-circle"></i> Login</div>
+    </div>
 </header>
 
 <!-- HOME SECTION -->
@@ -145,10 +175,46 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
             <img id="homePosterImg" src="https://via.placeholder.com/600x200?text=Mega+Sale+Offer">
         </div>
     </div>
-    <div id="home" class="grid">Loading...</div>
+    <div id="home" class="grid">Loading products...</div>
 </div>
 
-<!-- SUPPORT PAGE -->
+<!-- AUTH PAGE (LOGIN / SIGNUP) -->
+<div id="authPage">
+    <button class="btn dark back-btn" onclick="closeAuth()">✕ Close</button>
+    <div id="authContent" style="max-width: 400px; margin: auto; padding-top: 20px;">
+        <div id="loginSection">
+            <h2 style="text-align:center;">Member Login</h2>
+            <p style="text-align:center; color:#666; margin-bottom: 20px;">Login/Register to continue shopping</p>
+            <input type="text" id="authName" placeholder="Enter Full Name (New Users)">
+            <input type="email" id="authEmail" placeholder="Enter Valid Email (e.g. user@gmail.com)">
+            <input type="password" id="authPass" placeholder="Enter Password (min 6 chars)">
+            <button class="btn" id="authSubmitBtn" onclick="handleAuth()">Login / Create Account</button>
+            <p style="font-size: 11px; color: #e63946; margin-top: 10px; text-align: center; display:none;" id="authError"></p>
+        </div>
+        <div id="profileSection" style="display:none; text-align: center;">
+            <div style="font-size: 60px; color: #2874f0; margin-bottom: 10px;"><i class="fa fa-user-circle"></i></div>
+            <h2 id="profNameDisplay">User Name</h2>
+            <p id="profEmailDisplay" style="color:#666;"></p>
+            <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                <button class="btn dark" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CART PAGE -->
+<div id="cartPage">
+    <button class="btn dark back-btn" onclick="closeCart()">⬅ Back</button>
+    <h2 style="border-bottom: 2px solid #2874f0; padding-bottom: 10px;">My Cart</h2>
+    <div id="cartItemsList"></div>
+    <div id="cartEmptyMsg" style="text-align:center; padding:50px 20px; display:none;">
+        <i class="fa fa-shopping-basket" style="font-size: 50px; color: #ccc;"></i>
+        <p>Your cart is empty!</p>
+    </div>
+    <button id="cartBuyBtn" class="btn" style="display:none;" onclick="alert('Please select a product to buy individually for now.')">Buy All Now</button>
+</div>
+
+<!-- SUPPORT CHAT -->
 <div id="supportChatPage">
     <div class="chat-header">
         <i class="fa fa-arrow-left" onclick="closeSupport()"></i>
@@ -156,118 +222,136 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
     </div>
     <div id="chatMessages"></div>
     <div class="chat-input-box">
-        <input type="text" id="userChatInput" placeholder="Write your problem...">
+        <input type="text" id="userChatInput" placeholder="Describe your issue...">
         <button class="btn dark" style="margin:0; width:auto;" onclick="sendUserMsg()">Send</button>
     </div>
 </div>
 
-<!-- PRODUCT PAGE -->
+<!-- PRODUCT DETAILS PAGE -->
 <div id="product" class="page">
-    <button class="btn dark back-btn" onclick="goHome()">⬅ Back</button>
+    <button class="btn dark back-btn" onclick="goHome()">⬅ Back to Store</button>
     <div class="slider">
         <img id="slideImg">
         <div class="arrow left" onclick="prevImg()">‹</div>
         <div class="arrow right" onclick="nextImg()">›</div>
     </div>
     <div id="thumbBar" style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 0;"></div>
-    <h2 id="pname"></h2>
-    <h3 id="pprice"></h3>
-    <p id="pdetails"></p>
-    <p><b>Warranty:</b> <span id="pwarranty"></span></p>
-    <button class="btn" onclick="openCheckout()">Buy Now</button>
-</div>
-
-<!-- CHECKOUT PAGE -->
-<div id="checkoutPage" class="page" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:1500; overflow-y:auto; padding:20px; box-sizing:border-box;">
-    <button class="btn dark back-btn" onclick="closeCheckout()">⬅ Back</button>
-    <h2>Delivery Details</h2>
-    <p id="orderSummary" style="background:#eee; padding:12px; border-radius:8px; font-weight: bold;"></p>
-    
-    <input type="text" id="custName" placeholder="Full Name">
-    <input type="number" id="custPhone" placeholder="Phone Number">
-    <input type="text" id="custState" placeholder="State">
-    <input type="text" id="custDistrict" placeholder="District">
-    <input type="number" id="custPin" placeholder="Pincode">
-    <textarea id="custFullAddress" placeholder="Full Address with Landmark" rows="3"></textarea>
-    
-    <button class="btn" onclick="confirmOrder()">Confirm Order & WhatsApp</button>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="adminList" class="page">
-    <h2>Admin Panel</h2>
-    <div style="display:flex; gap:8px; flex-wrap: wrap;">
-        <button class="btn dark" onclick="goHome()">Back</button>
-        <button class="btn" onclick="addNew()">+ Product</button>
-        <button class="btn dark" onclick="showOrders()">Orders</button>
-        <button class="btn dark" onclick="showAdminSupport()">Chats</button>
+    <h2 id="pname" style="margin: 15px 0 5px;"></h2>
+    <h3 id="pprice" style="color: #388e3c; margin: 0 0 10px;"></h3>
+    <p id="pdetails" style="line-height: 1.5; color: #555;"></p>
+    <div style="background: #fff9e6; padding: 10px; border-radius: 6px; margin: 15px 0;">
+        <b>Warranty:</b> <span id="pwarranty"></span>
     </div>
-    <table>
-        <thead><tr><th>Name</th><th>Edit</th><th>Del</th></tr></thead>
+    <button class="btn cart-btn" onclick="addToCart()">Add to Cart</button>
+    <button class="btn" onclick="triggerBuyNow()">Buy Now</button>
+</div>
+
+<!-- CHECKOUT / ORDER PAGE -->
+<div id="checkoutPage" class="page" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:3000; overflow-y:auto; padding:20px; box-sizing:border-box;">
+    <button class="btn dark back-btn" onclick="closeCheckout()">⬅ Back</button>
+    <h2>Complete Your Order</h2>
+    <div id="orderSummary" style="background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom: 20px; border: 1px dashed #2874f0;"></div>
+    
+    <label>Delivery Name:</label>
+    <input type="text" id="custName" placeholder="Recipient's Name">
+    <label>Contact Number:</label>
+    <input type="number" id="custPhone" placeholder="Mobile Number">
+    <label>State:</label>
+    <input type="text" id="custState" placeholder="e.g. Maharashtra">
+    <label>District:</label>
+    <input type="text" id="custDistrict" placeholder="e.g. Mumbai">
+    <label>Pincode:</label>
+    <input type="number" id="custPin" placeholder="6-digit Pincode">
+    <label>Full Address:</label>
+    <textarea id="custFullAddress" placeholder="Building, Street, Landmark..." rows="3"></textarea>
+    
+    <button class="btn" onclick="confirmOrder()">Confirm Order via WhatsApp</button>
+</div>
+
+<!-- ADMIN PANEL SECTION -->
+<div id="adminList" class="page">
+    <h2 style="color: #d32f2f;">Admin Dashboard</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <button class="btn dark" onclick="goHome()">View Website</button>
+        <button class="btn" onclick="addNew()">+ New Product</button>
+        <button class="btn dark" onclick="showOrders()">View Orders</button>
+        <button class="btn dark" onclick="showAdminSupport()">Support Chats</button>
+        <button class="btn" style="background: #6200ea;" onclick="showCustomerDetails()">User Logins</button>
+    </div>
+    
+    <table style="margin-top: 20px;">
+        <thead><tr style="background:#eee;"><th>Product Name</th><th>Price</th><th>Action</th></tr></thead>
         <tbody id="plist"></tbody>
     </table>
     
     <div style="background:#fff; padding:15px; border-radius:10px; margin-top:20px; border:1px solid #ddd;">
-        <h3>Update Banners</h3>
-        <input id="postUrl1" placeholder="Banner 1 URL">
-        <input id="postUrl2" placeholder="Banner 2 URL">
+        <h3>Update Home Banners</h3>
+        <input id="postUrl1" placeholder="Banner URL 1">
+        <input id="postUrl2" placeholder="Banner URL 2">
         <button class="btn dark" onclick="savePosters()">Update Banners</button>
     </div>
 </div>
 
-<!-- ADMIN ORDERS -->
-<div id="adminOrders" class="page">
-    <h2>All Orders</h2>
+<!-- ADMIN: LOGIN HISTORY -->
+<div id="adminLoginDetails" class="page">
+    <h2>Customer Login History</h2>
     <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
     <div style="overflow-x:auto;">
         <table>
-            <thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Details</th><th>X</th></tr></thead>
+            <thead style="background: #2874f0; color:#fff;"><tr><th>Name</th><th>Email</th><th>Password</th><th>Join Date</th></tr></thead>
+            <tbody id="loginTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ADMIN: ORDERS -->
+<div id="adminOrders" class="page">
+    <h2>Pending Orders</h2>
+    <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Location</th><th>Del</th></tr></thead>
             <tbody id="orderTableBody"></tbody>
         </table>
     </div>
 </div>
 
-<!-- ADMIN SUPPORT -->
+<!-- ADMIN: SUPPORT LIST -->
 <div id="adminSupportList" class="page">
-    <h2>Customer Chats</h2>
+    <h2>Customer Support Inbox</h2>
     <button class="btn dark back-btn" onclick="openAdminList()">⬅ Back</button>
     <div id="chatListContainer" style="padding:10px;"></div>
 </div>
 
-<!-- ADMIN REPLY -->
+<!-- ADMIN: CHAT REPLY -->
 <div id="adminReplyPage" class="page">
     <button class="btn dark back-btn" onclick="showAdminSupport()">⬅ Back</button>
-    <div id="adminChatMessages" style="height: 400px; overflow-y: auto; background: #eee; padding: 15px; display: flex; flex-direction: column; gap: 10px;"></div>
+    <div id="adminChatMessages" style="height: 400px; overflow-y: auto; background: #eee; padding: 15px; display: flex; flex-direction: column; gap: 10px; border-radius: 8px;"></div>
     <div class="chat-input-box">
-        <input type="text" id="adminReplyInput" placeholder="Reply...">
-        <button class="btn" style="margin:0;" onclick="sendAdminReply()">Reply</button>
+        <input type="text" id="adminReplyInput" placeholder="Type your reply...">
+        <button class="btn" style="margin:0; width: auto;" onclick="sendAdminReply()">Reply</button>
     </div>
 </div>
 
-<!-- ADMIN ADD/EDIT -->
+<!-- ADMIN: ADD/EDIT FORM -->
 <div id="adminEdit" class="page">
-    <h2 id="formTitle"></h2>
-    <button class="btn dark" onclick="openAdminList()">⬅ Back</button>
-    <input id="aname" placeholder="Product Name">
-    <input id="aprice" placeholder="Price">
-    <input id="img1" placeholder="Image 1 URL">
+    <h2 id="formTitle">Product Editor</h2>
+    <button class="btn dark back-btn" onclick="openAdminList()">⬅ Cancel</button>
+    <label>Product Name</label><input id="aname">
+    <label>Price (with symbol)</label><input id="aprice">
+    <label>Images (URLs)</label>
+    <input id="img1" placeholder="Main Image URL">
     <input id="img2" placeholder="Image 2 URL">
     <input id="img3" placeholder="Image 3 URL">
-    <textarea id="adetails" placeholder="Product Details" rows="4"></textarea>
-    <input id="awarranty" placeholder="Warranty">
-    <button class="btn" onclick="save()">Save Product</button>
+    <label>Full Description</label><textarea id="adetails" rows="4"></textarea>
+    <label>Warranty Info</label><input id="awarranty">
+    <button class="btn" onclick="save()">Save to Database</button>
 </div>
 
 </div>
 
 <script>
-/* LOADING LOGIC */
-setTimeout(()=>{
-  document.getElementById("loadingScreen").style.display="none";
-  document.getElementById("mainSite").style.display="block";
-},2000);
-
-/* FIREBASE CONFIG */
+/* FIREBASE CONFIGURATION */
 const firebaseConfig={
  apiKey:"AIzaSyBzfvl9ZcvApNZf7kFih7oCvGkYLSAKm0",
  authDomain:"nuova-87735.firebaseapp.com",
@@ -282,18 +366,43 @@ const db=firebase.database().ref("products");
 const dbP=firebase.database().ref("posters");
 const dbO=firebase.database().ref("orders");
 const dbChat=firebase.database().ref("support_chats");
+const dbU=firebase.database().ref("users");
 
+/* GLOBAL VARIABLES */
 let products=[], editIndex=null, slideIndex=0, currentImgs=[];
 let homePosters = ["https://via.placeholder.com/600x200"];
 let posterTick = 0;
 let selectedProduct = null;
+let cart = JSON.parse(localStorage.getItem("renuova_cart")) || [];
+let currentUser = null;
 
 const myChatId = localStorage.getItem("renuova_chat_id") || "User_" + Math.floor(Math.random() * 1000000);
 localStorage.setItem("renuova_chat_id", myChatId);
 
+/* INITIALIZATION */
+window.onload = () => {
+  // Loading screen logic
+  setTimeout(()=>{
+    const loader = document.getElementById("loader");
+    const site = document.getElementById("mainSite");
+    
+    // Slide loader up
+    loader.style.transform = "translateY(-100%)";
+    
+    // Show main site with fade
+    site.style.display="block";
+    setTimeout(() => site.style.opacity = "1", 50);
+
+    checkUserSession();
+    updateCartBadge();
+  }, 2500); // 2.5 seconds delay for premium animation
+};
+
+/* DATA SYNC */
 db.on("value",(s)=>{ products=s.val()||[]; loadHome(); if(adminList.style.display==="block") renderList(); });
 dbP.on("value", (s) => { if(s.val()){ homePosters = s.val(); updatePosterImage(); }});
 setInterval(() => { posterTick = (posterTick + 1) % homePosters.length; updatePosterImage(); }, 4000);
+
 function updatePosterImage() { const imgEl = document.getElementById("homePosterImg"); if(imgEl) imgEl.src = homePosters[posterTick]; }
 
 function loadHome(){
@@ -303,6 +412,7 @@ function loadHome(){
  });
 }
 
+/* PRODUCT VIEW */
 window.openP=function(i){
  homeSection.style.display="none";
  product.style.display="block";
@@ -321,12 +431,177 @@ window.openP=function(i){
  pprice.innerText=products[i].p;
  pdetails.innerText=products[i].d;
  pwarranty.innerText=products[i].w;
+ window.scrollTo(0,0);
 }
 function updateUI() { slideImg.src = currentImgs[slideIndex]; }
+function prevImg(){ slideIndex = (slideIndex-1+currentImgs.length)%currentImgs.length; updateUI(); }
+function nextImg(){ slideIndex = (slideIndex+1)%currentImgs.length; updateUI(); }
 
-/* ORDER LOGIC */
+/* LOGIN & AUTHENTICATION WITH VALIDATION */
+function openAuth() { authPage.style.display = "block"; }
+function closeAuth() { authPage.style.display = "none"; }
+
+function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function handleAuth() {
+    let name = authName.value.trim();
+    let email = authEmail.value.trim().toLowerCase();
+    let pass = authPass.value.trim();
+    let errorEl = document.getElementById("authError");
+    
+    errorEl.style.display = "none";
+
+    if(!email || !pass) {
+        showAuthError("Email and Password are required!");
+        return;
+    }
+
+    if(!isValidEmail(email)) {
+        showAuthError("Please enter a valid email address!");
+        return;
+    }
+
+    if(pass.length < 6) {
+        showAuthError("Password must be at least 6 characters!");
+        return;
+    }
+
+    let userKey = email.replace(/[.$#[\]]/g, "_");
+    authSubmitBtn.disabled = true;
+    authSubmitBtn.innerText = "Processing...";
+
+    dbU.child(userKey).once("value", (snapshot) => {
+        let existingUser = snapshot.val();
+        
+        if(existingUser) {
+            if(existingUser.pass === pass) {
+                completeLogin(existingUser);
+            } else {
+                showAuthError("Wrong password! Please try again.");
+                authSubmitBtn.disabled = false;
+                authSubmitBtn.innerText = "Login / Create Account";
+            }
+        } else {
+            if(!name) {
+                showAuthError("New user? Please enter your Full Name.");
+                authSubmitBtn.disabled = false;
+                authSubmitBtn.innerText = "Login / Create Account";
+                return;
+            }
+            let userData = { name, email, pass, date: new Date().toLocaleString() };
+            dbU.child(userKey).set(userData).then(() => {
+                completeLogin(userData);
+            });
+        }
+    });
+}
+
+function showAuthError(msg) {
+    let errorEl = document.getElementById("authError");
+    errorEl.innerText = msg;
+    errorEl.style.display = "block";
+}
+
+function completeLogin(userData) {
+    localStorage.setItem("renuova_user", JSON.stringify(userData));
+    alert("Welcome, " + userData.name);
+    checkUserSession();
+    closeAuth();
+    authSubmitBtn.disabled = false;
+    authSubmitBtn.innerText = "Login / Create Account";
+}
+
+function checkUserSession() {
+    let user = localStorage.getItem("renuova_user");
+    if(user) {
+        currentUser = JSON.parse(user);
+        userBtn.innerHTML = `<i class="fa fa-user"></i> Profile`;
+        loginSection.style.display = "none";
+        profileSection.style.display = "block";
+        profNameDisplay.innerText = currentUser.name;
+        profEmailDisplay.innerText = currentUser.email;
+    } else {
+        currentUser = null;
+        userBtn.innerHTML = `<i class="fa fa-user-circle"></i> Login`;
+        loginSection.style.display = "block";
+        profileSection.style.display = "none";
+    }
+}
+
+function logout() {
+    if(confirm("Sign out from RENUOVA?")) {
+        localStorage.removeItem("renuova_user");
+        currentUser = null;
+        checkUserSession();
+        closeAuth();
+        location.reload();
+    }
+}
+
+/* CART FUNCTIONALITY */
+function updateCartBadge() { cartCount.innerText = cart.length; }
+
+function addToCart() {
+    if(!selectedProduct) return;
+    cart.push(selectedProduct);
+    localStorage.setItem("renuova_cart", JSON.stringify(cart));
+    updateCartBadge();
+    alert("Added to cart! Use 'Buy Now' to checkout.");
+}
+
+function openCart() {
+    cartPage.style.display = "block";
+    renderCart();
+}
+function closeCart() { cartPage.style.display = "none"; }
+
+function renderCart() {
+    cartItemsList.innerHTML = "";
+    if(cart.length === 0) {
+        cartEmptyMsg.style.display = "block";
+        cartBuyBtn.style.display = "none";
+        return;
+    }
+    cartEmptyMsg.style.display = "none";
+    cart.forEach((item, index) => {
+        cartItemsList.innerHTML += `
+        <div style="display:flex; align-items:center; gap:10px; background:#fff; padding:10px; border-radius:10px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
+            <img src="${item.imgs[0]}" style="width:60px; height:60px; object-fit:contain;">
+            <div style="flex:1;">
+                <b style="font-size:14px;">${item.n}</b><br><span style="color:green; font-weight:bold;">${item.p}</span>
+            </div>
+            <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none; font-size:18px;"><i class="fa fa-trash"></i></button>
+        </div>`;
+    });
+}
+
+function removeFromCart(i) {
+    cart.splice(i, 1);
+    localStorage.setItem("renuova_cart", JSON.stringify(cart));
+    updateCartBadge();
+    renderCart();
+}
+
+/* CHECKOUT LOGIC */
+function triggerBuyNow() {
+    if(!currentUser) {
+        alert("🔒 Login Required!\n\nPlease login to enter delivery address.");
+        openAuth();
+        return;
+    }
+    openCheckout();
+}
+
 window.openCheckout = () => {
-    document.getElementById("orderSummary").innerText = "Ordering: " + selectedProduct.n + " (" + selectedProduct.p + ")";
+    document.getElementById("orderSummary").innerHTML = `
+        <b>🛍️ Buying:</b> ${selectedProduct.n}<br>
+        <b>💰 Amount:</b> ${selectedProduct.p}<br>
+        <small style="color:#2874f0;">User: ${currentUser.email}</small>
+    `;
+    document.getElementById("custName").value = currentUser.name;
     document.getElementById("checkoutPage").style.display = "block";
 }
 window.closeCheckout = () => { document.getElementById("checkoutPage").style.display = "none"; }
@@ -339,36 +614,145 @@ window.confirmOrder = () => {
     let pin = document.getElementById("custPin").value;
     let addr = document.getElementById("custFullAddress").value;
 
-    if(!name || !phone || !state || !dist || !pin || !addr) return alert("Please fill all details!");
+    if(!name || !phone || !state || !dist || !pin || !addr) return alert("All address fields are required!");
 
-    let order = { 
+    let orderData = { 
         productName: selectedProduct.n, 
         price: selectedProduct.p, 
         customerName: name, 
         phone: phone, 
-        state: state,
-        district: dist,
+        location: `${dist}, ${state}`,
         pincode: pin,
         address: addr, 
+        userEmail: currentUser.email,
         date: new Date().toLocaleString() 
     };
 
-    dbO.push(order).then(() => {
-        let msg = `*🛍️ NEW ORDER CONFIRMED* %0A%0A` +
+    dbO.push(orderData).then(() => {
+        let msg = `*🛍️ NEW ORDER - RENUOVA*%0A%0A` +
                   `*Product:* ${selectedProduct.n}%0A` +
                   `*Price:* ${selectedProduct.p}%0A%0A` +
-                  `*Name:* ${name}%0A` +
+                  `*Customer:* ${name}%0A` +
                   `*Phone:* ${phone}%0A` +
-                  `*Address:* ${addr}%0A%0A` +
-                  `*Date:* ${order.date}`;
+                  `*Address:* ${addr}, ${dist}, ${state} (${pin})%0A%0A` +
+                  `*Email:* ${currentUser.email}`;
         window.open(`https://wa.me/9229288001?text=${msg}`);
         closeCheckout();
         goHome();
-        alert("Order Successful!");
+        alert("Success! Redirecting to WhatsApp for confirmation.");
     });
 }
 
-/* ADMIN ORDERS */
+/* SEARCH */
+function searchProduct(e){
+  let q = e.target.value.toLowerCase();
+  let filtered = products.filter(p => p.n.toLowerCase().includes(q));
+  home.innerHTML = "";
+  filtered.forEach((x,i)=>{ 
+      let originalIdx = products.indexOf(x);
+      home.innerHTML += `<div class="card" onclick="openP(${originalIdx})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`; 
+  });
+}
+
+/* ADMIN LOGIC */
+window.goHome=()=>{ 
+    document.querySelectorAll(".page").forEach(p=>p.style.display="none"); 
+    homeSection.style.display="block"; 
+}
+
+let logoClickCount = 0;
+document.getElementById("logo").onclick=()=>{
+    logoClickCount++;
+    if(logoClickCount===10){
+        let pass = prompt("Admin Password:");
+        if(pass==="nitish20086"){ 
+            homeSection.style.display="none"; 
+            adminList.style.display="block"; 
+            renderList(); 
+        } else {
+            alert("Unauthorized Access!");
+        }
+        logoClickCount=0;
+    }
+}
+
+function renderList(){
+ plist.innerHTML="";
+ products.forEach((x,i)=>{
+  plist.innerHTML+=`<tr><td>${x.n}</td><td>${x.p}</td><td><button onclick="editProduct(${i})">Edit</button> <button onclick="del(${i})" style="background:red; color:#fff; border:none;">X</button></td></tr>`;
+ });
+}
+
+window.savePosters = () => {
+    let p1 = document.getElementById("postUrl1").value;
+    let p2 = document.getElementById("postUrl2").value;
+    if(p1 && p2) dbP.set([p1, p2]).then(() => alert("Banners Updated!"));
+}
+
+window.editProduct=(i)=>{
+    editIndex=i;
+    formTitle.innerText="Edit Product Data";
+    adminList.style.display="none";
+    adminEdit.style.display="block";
+    aname.value=products[i].n;
+    aprice.value=products[i].p;
+    img1.value=products[i].imgs[0]||"";
+    img2.value=products[i].imgs[1]||"";
+    img3.value=products[i].imgs[2]||"";
+    adetails.value=products[i].d;
+    awarranty.value=products[i].w;
+}
+
+window.addNew=()=>{
+    editIndex=null;
+    formTitle.innerText="Add New Entry";
+    adminList.style.display="none";
+    adminEdit.style.display="block";
+    aname.value=aprice.value=img1.value=img2.value=img3.value=adetails.value=awarranty.value="";
+}
+
+window.openAdminList=()=>{ 
+    document.querySelectorAll(".page").forEach(p=>p.style.display="none"); 
+    adminList.style.display="block"; 
+    renderList(); 
+}
+
+window.del=(i)=>{ if(confirm("Are you sure?")){ products.splice(i,1); db.set(products); } }
+
+window.save=()=>{
+    let imgs=[img1.value, img2.value, img3.value].filter(x=>x);
+    let obj={
+        n:aname.value,
+        p:aprice.value,
+        imgs:imgs.length?imgs:["https://via.placeholder.com/500"],
+        d:adetails.value,
+        w:awarranty.value
+    };
+    if(editIndex===null) products.push(obj);
+    else products[editIndex]=obj;
+    db.set(products).then(()=>{ alert("Saved Successfully!"); openAdminList(); });
+}
+
+/* ADMIN: CUSTOMER LOGINS */
+window.showCustomerDetails = () => {
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    document.getElementById("adminLoginDetails").style.display = "block";
+    dbU.once("value", (s) => {
+        let data = s.val();
+        let html = "";
+        for(let k in data) {
+            html += `<tr>
+                <td>${data[k].name || 'Old User'}</td>
+                <td>${data[k].email}</td>
+                <td style="color:red; font-weight:bold; background:#fff0f0;">${data[k].pass}</td>
+                <td>${data[k].date}</td>
+            </tr>`;
+        }
+        loginTableBody.innerHTML = html || "<tr><td colspan='4'>No users registered yet.</td></tr>";
+    });
+}
+
+/* ADMIN: ORDER HISTORY */
 window.showOrders = () => {
     adminList.style.display = "none";
     document.getElementById("adminOrders").style.display = "block";
@@ -380,40 +764,41 @@ window.showOrders = () => {
             html += `<tr>
                 <td>${o.date}</td>
                 <td>${o.productName}</td>
-                <td>${o.customerName}</td>
-                <td>${o.district}, ${o.state} - ${o.address}</td>
-                <td><button onclick="delOrder('${k}')">X</button></td>
+                <td>${o.customerName}<br>${o.phone}</td>
+                <td>${o.location}</td>
+                <td><button onclick="delOrder('${k}')" style="background:red; color:#fff; border:none;">X</button></td>
             </tr>`; 
         }
-        document.getElementById("orderTableBody").innerHTML = html || "<tr><td colspan='5'>No Orders</td></tr>";
+        document.getElementById("orderTableBody").innerHTML = html || "<tr><td colspan='5'>No pending orders.</td></tr>";
     });
 }
-window.delOrder = (id) => { if(confirm("Delete Order?")) dbO.child(id).remove(); }
+window.delOrder = (id) => { if(confirm("Clear this order?")) dbO.child(id).remove(); }
 
-/* --- CUSTOMER SUPPORT --- */
+/* CHAT SYSTEM */
 function openSupport() { document.getElementById("supportChatPage").style.display = "flex"; loadUserMessages(); }
 function closeSupport() { document.getElementById("supportChatPage").style.display = "none"; }
 
 function loadUserMessages() {
-    dbChat.child(myChatId).on("value", (s) => {
-        const data = s.val(); const msgDiv = document.getElementById("chatMessages");
+    dbChat.child(myChatId).child("messages").on("value", (s) => {
+        const msgDiv = document.getElementById("chatMessages");
         msgDiv.innerHTML = "";
-        if(data && data.messages) {
-            Object.values(data.messages).forEach(m => { msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; });
-            msgDiv.scrollTop = msgDiv.scrollHeight;
-        }
+        s.forEach((snap) => {
+            const m = snap.val();
+            msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`;
+        });
+        msgDiv.scrollTop = msgDiv.scrollHeight;
     });
 }
 function sendUserMsg() {
-    const input = document.getElementById("userChatInput"); if(!input.value.trim()) return;
+    const input = document.getElementById("userChatInput"); 
+    if(!input.value.trim()) return;
     dbChat.child(myChatId).child("messages").push({ sender: "user", text: input.value, time: Date.now() });
     dbChat.child(myChatId).update({ lastMsg: input.value, chatId: myChatId, lastTime: Date.now() });
     input.value = "";
 }
 
-/* --- ADMIN CHAT LOGIC --- */
+/* ADMIN CHAT */
 let activeAdminChat = "";
-
 function showAdminSupport() {
     document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     document.getElementById("adminSupportList").style.display = "block";
@@ -421,8 +806,7 @@ function showAdminSupport() {
         const chats = s.val(); 
         const container = document.getElementById("chatListContainer"); 
         container.innerHTML = "";
-        if(!chats) { container.innerHTML = "No active chats."; return; }
-        
+        if(!chats) { container.innerHTML = "Empty inbox."; return; }
         for(let id in chats) { 
             container.innerHTML += `
             <div class="admin-chat-card">
@@ -435,14 +819,10 @@ function showAdminSupport() {
         }
     });
 }
-
 function deleteChat(event, id) {
     event.stopPropagation();
-    if(confirm("Are you sure you want to delete this conversation?")) {
-        dbChat.child(id).remove().then(() => alert("Chat Deleted"));
-    }
+    if(confirm("Delete this conversation?")) dbChat.child(id).remove();
 }
-
 function openAdminReply(id) {
     activeAdminChat = id; 
     document.getElementById("adminSupportList").style.display = "none"; 
@@ -450,68 +830,20 @@ function openAdminReply(id) {
     dbChat.child(id).child("messages").on("value", (s) => {
         const msgDiv = document.getElementById("adminChatMessages"); 
         msgDiv.innerHTML = "";
-        const msgs = s.val(); 
-        if(msgs) { 
-            Object.values(msgs).forEach(m => { 
-                msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; 
-            }); 
-            msgDiv.scrollTop = msgDiv.scrollHeight; 
-        }
+        s.forEach((snap) => {
+            const m = snap.val();
+            msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`;
+        }); 
+        msgDiv.scrollTop = msgDiv.scrollHeight; 
     });
 }
-
 function sendAdminReply() {
     const input = document.getElementById("adminReplyInput"); 
     if(!input.value.trim()) return;
-    
-    // Push message to history
     dbChat.child(activeAdminChat).child("messages").push({ sender: "admin", text: input.value, time: Date.now() });
-    
-    // Update last message in the list
-    dbChat.child(activeAdminChat).update({ lastMsg: "You: " + input.value, lastTime: Date.now() });
-    
+    dbChat.child(activeAdminChat).update({ lastMsg: "Admin: " + input.value, lastTime: Date.now() });
     input.value = "";
 }
-
-/* --- PRODUCT & BANNER ADMIN --- */
-window.goHome=()=>{ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); homeSection.style.display="block"; }
-
-let clickCount = 0;
-document.getElementById("logo").onclick=()=>{
-    clickCount++;
-    if(clickCount===10){
-        if(prompt("Admin Password?")==="nitish20086"){ homeSection.style.display="none"; adminList.style.display="block"; renderList(); }
-        clickCount=0;
-    }
-}
-
-function renderList(){
- plist.innerHTML="";
- products.forEach((x,i)=>{
-  plist.innerHTML+=`<tr><td>${x.n}</td><td><button onclick="editProduct(${i})">Edit</button></td><td><button onclick="del(${i})">X</button></td></tr>`;
- });
-}
-
-window.savePosters = () => {
-    let p1 = document.getElementById("postUrl1").value;
-    let p2 = document.getElementById("postUrl2").value;
-    dbP.set([p1, p2]).then(() => alert("Banners Updated"));
-}
-
-window.editProduct=(i)=>{editIndex=i;formTitle.innerText="Edit Product";adminList.style.display="none";adminEdit.style.display="block";aname.value=products[i].n;aprice.value=products[i].p;img1.value=products[i].imgs[0]||"";img2.value=products[i].imgs[1]||"";img3.value=products[i].imgs[2]||"";adetails.value=products[i].d;awarranty.value=products[i].w;}
-window.addNew=()=>{editIndex=null;formTitle.innerText="Add New Product";adminList.style.display="none";adminEdit.style.display="block";aname.value=aprice.value=img1.value=img2.value=img3.value=adetails.value=awarranty.value="";}
-window.openAdminList=()=>{ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); adminList.style.display="block"; renderList(); }
-window.del=(i)=>{if(confirm("Delete?")){products.splice(i,1);db.set(products);}}
-window.save=()=>{let imgs=[img1.value,img2.value,img3.value].filter(x=>x);let obj={n:aname.value,p:aprice.value,imgs:imgs.length?imgs:["https://picsum.photos/500"],d:adetails.value,w:awarranty.value};if(editIndex===null)products.push(obj);else products[editIndex]=obj;db.set(products).then(()=>{alert("Saved");openAdminList();});}
-
-function searchProduct(e){
-  let q = e.target.value.toLowerCase();
-  let filtered = products.filter(p => p.n.toLowerCase().includes(q));
-  home.innerHTML = "";
-  filtered.forEach((x,i)=>{ home.innerHTML += `<div class="card" onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`; });
-}
-function prevImg(){ slideIndex = (slideIndex-1+currentImgs.length)%currentImgs.length; updateUI(); }
-function nextImg(){ slideIndex = (slideIndex+1)%currentImgs.length; updateUI(); }
 </script>
 
 </body>

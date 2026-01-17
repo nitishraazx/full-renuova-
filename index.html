@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-/* ===== NEW PREMIUM LOADING PAGE ===== */
+/* ===== PREMIUM LOADING PAGE ===== */
 #loader {
     position: fixed;
     top: 0; left: 0;
@@ -178,7 +178,7 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
     <div id="home" class="grid">Loading products...</div>
 </div>
 
-<!-- AUTH PAGE (LOGIN / SIGNUP) -->
+<!-- AUTH PAGE -->
 <div id="authPage">
     <button class="btn dark back-btn" onclick="closeAuth()">✕ Close</button>
     <div id="authContent" style="max-width: 400px; margin: auto; padding-top: 20px;">
@@ -211,7 +211,6 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
         <i class="fa fa-shopping-basket" style="font-size: 50px; color: #ccc;"></i>
         <p>Your cart is empty!</p>
     </div>
-    <button id="cartBuyBtn" class="btn" style="display:none;" onclick="alert('Please select a product to buy individually for now.')">Buy All Now</button>
 </div>
 
 <!-- SUPPORT CHAT -->
@@ -283,13 +282,6 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
         <thead><tr style="background:#eee;"><th>Product Name</th><th>Price</th><th>Action</th></tr></thead>
         <tbody id="plist"></tbody>
     </table>
-    
-    <div style="background:#fff; padding:15px; border-radius:10px; margin-top:20px; border:1px solid #ddd;">
-        <h3>Update Home Banners</h3>
-        <input id="postUrl1" placeholder="Banner URL 1">
-        <input id="postUrl2" placeholder="Banner URL 2">
-        <button class="btn dark" onclick="savePosters()">Update Banners</button>
-    </div>
 </div>
 
 <!-- ADMIN: LOGIN HISTORY -->
@@ -381,31 +373,30 @@ localStorage.setItem("renuova_chat_id", myChatId);
 
 /* INITIALIZATION */
 window.onload = () => {
-  // Loading screen logic
   setTimeout(()=>{
     const loader = document.getElementById("loader");
     const site = document.getElementById("mainSite");
-    
-    // Slide loader up
     loader.style.transform = "translateY(-100%)";
-    
-    // Show main site with fade
     site.style.display="block";
     setTimeout(() => site.style.opacity = "1", 50);
-
     checkUserSession();
     updateCartBadge();
-  }, 2500); // 2.5 seconds delay for premium animation
+  }, 2500);
 };
 
 /* DATA SYNC */
-db.on("value",(s)=>{ products=s.val()||[]; loadHome(); if(adminList.style.display==="block") renderList(); });
+db.on("value",(s)=>{ 
+    products=s.val()||[]; 
+    loadHome(); 
+    if(document.getElementById("adminList").style.display==="block") renderList(); 
+});
 dbP.on("value", (s) => { if(s.val()){ homePosters = s.val(); updatePosterImage(); }});
 setInterval(() => { posterTick = (posterTick + 1) % homePosters.length; updatePosterImage(); }, 4000);
 
 function updatePosterImage() { const imgEl = document.getElementById("homePosterImg"); if(imgEl) imgEl.src = homePosters[posterTick]; }
 
 function loadHome(){
+ const home = document.getElementById("home");
  home.innerHTML="";
  products.forEach((x,i)=>{
   home.innerHTML+=`<div class="card" onclick="openP(${i})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`;
@@ -414,11 +405,12 @@ function loadHome(){
 
 /* PRODUCT VIEW */
 window.openP=function(i){
- homeSection.style.display="none";
- product.style.display="block";
+ document.getElementById("homeSection").style.display="none";
+ document.getElementById("product").style.display="block";
  selectedProduct = products[i];
  currentImgs=products[i].imgs;
  slideIndex=0;
+ const thumbBar = document.getElementById("thumbBar");
  thumbBar.innerHTML = "";
  currentImgs.forEach((imgSrc, idx) => {
      let t = document.createElement("img");
@@ -427,219 +419,140 @@ window.openP=function(i){
      thumbBar.appendChild(t);
  });
  updateUI();
- pname.innerText=products[i].n;
- pprice.innerText=products[i].p;
- pdetails.innerText=products[i].d;
- pwarranty.innerText=products[i].w;
+ document.getElementById("pname").innerText=products[i].n;
+ document.getElementById("pprice").innerText=products[i].p;
+ document.getElementById("pdetails").innerText=products[i].d;
+ document.getElementById("pwarranty").innerText=products[i].w;
  window.scrollTo(0,0);
 }
-function updateUI() { slideImg.src = currentImgs[slideIndex]; }
+function updateUI() { document.getElementById("slideImg").src = currentImgs[slideIndex]; }
 function prevImg(){ slideIndex = (slideIndex-1+currentImgs.length)%currentImgs.length; updateUI(); }
 function nextImg(){ slideIndex = (slideIndex+1)%currentImgs.length; updateUI(); }
 
-/* LOGIN & AUTHENTICATION WITH VALIDATION */
-function openAuth() { authPage.style.display = "block"; }
-function closeAuth() { authPage.style.display = "none"; }
-
-function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
+/* AUTHENTICATION */
+function openAuth() { document.getElementById("authPage").style.display = "block"; }
+function closeAuth() { document.getElementById("authPage").style.display = "none"; }
+function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 
 function handleAuth() {
-    let name = authName.value.trim();
-    let email = authEmail.value.trim().toLowerCase();
-    let pass = authPass.value.trim();
+    let name = document.getElementById("authName").value.trim();
+    let email = document.getElementById("authEmail").value.trim().toLowerCase();
+    let pass = document.getElementById("authPass").value.trim();
     let errorEl = document.getElementById("authError");
-    
     errorEl.style.display = "none";
-
-    if(!email || !pass) {
-        showAuthError("Email and Password are required!");
-        return;
-    }
-
-    if(!isValidEmail(email)) {
-        showAuthError("Please enter a valid email address!");
-        return;
-    }
-
-    if(pass.length < 6) {
-        showAuthError("Password must be at least 6 characters!");
-        return;
-    }
+    if(!email || !pass) return showAuthError("Email and Password are required!");
+    if(!isValidEmail(email)) return showAuthError("Please enter a valid email address!");
+    if(pass.length < 6) return showAuthError("Password must be at least 6 characters!");
 
     let userKey = email.replace(/[.$#[\]]/g, "_");
-    authSubmitBtn.disabled = true;
-    authSubmitBtn.innerText = "Processing...";
+    const btn = document.getElementById("authSubmitBtn");
+    btn.disabled = true; btn.innerText = "Processing...";
 
     dbU.child(userKey).once("value", (snapshot) => {
         let existingUser = snapshot.val();
-        
         if(existingUser) {
-            if(existingUser.pass === pass) {
-                completeLogin(existingUser);
-            } else {
-                showAuthError("Wrong password! Please try again.");
-                authSubmitBtn.disabled = false;
-                authSubmitBtn.innerText = "Login / Create Account";
-            }
+            if(existingUser.pass === pass) completeLogin(existingUser);
+            else { showAuthError("Wrong password!"); btn.disabled = false; btn.innerText = "Login / Create Account"; }
         } else {
-            if(!name) {
-                showAuthError("New user? Please enter your Full Name.");
-                authSubmitBtn.disabled = false;
-                authSubmitBtn.innerText = "Login / Create Account";
-                return;
-            }
+            if(!name) { showAuthError("New user? Enter Full Name."); btn.disabled = false; btn.innerText = "Login / Create Account"; return; }
             let userData = { name, email, pass, date: new Date().toLocaleString() };
-            dbU.child(userKey).set(userData).then(() => {
-                completeLogin(userData);
-            });
+            dbU.child(userKey).set(userData).then(() => completeLogin(userData));
         }
     });
 }
-
-function showAuthError(msg) {
-    let errorEl = document.getElementById("authError");
-    errorEl.innerText = msg;
-    errorEl.style.display = "block";
-}
-
+function showAuthError(msg) { let errorEl = document.getElementById("authError"); errorEl.innerText = msg; errorEl.style.display = "block"; }
 function completeLogin(userData) {
     localStorage.setItem("renuova_user", JSON.stringify(userData));
     alert("Welcome, " + userData.name);
-    checkUserSession();
-    closeAuth();
-    authSubmitBtn.disabled = false;
-    authSubmitBtn.innerText = "Login / Create Account";
+    checkUserSession(); closeAuth();
+    document.getElementById("authSubmitBtn").disabled = false; document.getElementById("authSubmitBtn").innerText = "Login / Create Account";
 }
-
 function checkUserSession() {
     let user = localStorage.getItem("renuova_user");
     if(user) {
         currentUser = JSON.parse(user);
-        userBtn.innerHTML = `<i class="fa fa-user"></i> Profile`;
-        loginSection.style.display = "none";
-        profileSection.style.display = "block";
-        profNameDisplay.innerText = currentUser.name;
-        profEmailDisplay.innerText = currentUser.email;
+        document.getElementById("userBtn").innerHTML = `<i class="fa fa-user"></i> Profile`;
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("profileSection").style.display = "block";
+        document.getElementById("profNameDisplay").innerText = currentUser.name;
+        document.getElementById("profEmailDisplay").innerText = currentUser.email;
     } else {
         currentUser = null;
-        userBtn.innerHTML = `<i class="fa fa-user-circle"></i> Login`;
-        loginSection.style.display = "block";
-        profileSection.style.display = "none";
+        document.getElementById("userBtn").innerHTML = `<i class="fa fa-user-circle"></i> Login`;
+        document.getElementById("loginSection").style.display = "block";
+        document.getElementById("profileSection").style.display = "none";
     }
 }
+function logout() { if(confirm("Sign out?")) { localStorage.removeItem("renuova_user"); location.reload(); } }
 
-function logout() {
-    if(confirm("Sign out from RENUOVA?")) {
-        localStorage.removeItem("renuova_user");
-        currentUser = null;
-        checkUserSession();
-        closeAuth();
-        location.reload();
-    }
-}
-
-/* CART FUNCTIONALITY */
-function updateCartBadge() { cartCount.innerText = cart.length; }
-
+/* CART & CHECKOUT */
+function updateCartBadge() { document.getElementById("cartCount").innerText = cart.length; }
 function addToCart() {
     if(!selectedProduct) return;
     cart.push(selectedProduct);
     localStorage.setItem("renuova_cart", JSON.stringify(cart));
-    updateCartBadge();
-    alert("Added to cart! Use 'Buy Now' to checkout.");
+    updateCartBadge(); alert("Added to cart!");
 }
-
-function openCart() {
-    cartPage.style.display = "block";
-    renderCart();
-}
-function closeCart() { cartPage.style.display = "none"; }
-
+function openCart() { document.getElementById("cartPage").style.display = "block"; renderCart(); }
+function closeCart() { document.getElementById("cartPage").style.display = "none"; }
 function renderCart() {
-    cartItemsList.innerHTML = "";
-    if(cart.length === 0) {
-        cartEmptyMsg.style.display = "block";
-        cartBuyBtn.style.display = "none";
-        return;
-    }
-    cartEmptyMsg.style.display = "none";
+    const list = document.getElementById("cartItemsList");
+    list.innerHTML = "";
+    if(cart.length === 0) { document.getElementById("cartEmptyMsg").style.display = "block"; return; }
+    document.getElementById("cartEmptyMsg").style.display = "none";
     cart.forEach((item, index) => {
-        cartItemsList.innerHTML += `
-        <div style="display:flex; align-items:center; gap:10px; background:#fff; padding:10px; border-radius:10px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
-            <img src="${item.imgs[0]}" style="width:60px; height:60px; object-fit:contain;">
-            <div style="flex:1;">
-                <b style="font-size:14px;">${item.n}</b><br><span style="color:green; font-weight:bold;">${item.p}</span>
-            </div>
-            <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none; font-size:18px;"><i class="fa fa-trash"></i></button>
+        list.innerHTML += `<div style="display:flex; align-items:center; gap:10px; background:#fff; padding:10px; border-radius:10px; margin-bottom:10px;">
+            <img src="${item.imgs[0]}" style="width:50px; height:50px; object-fit:contain;">
+            <div style="flex:1;"><b>${item.n}</b><br><span style="color:green;">${item.p}</span></div>
+            <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none;"><i class="fa fa-trash"></i></button>
         </div>`;
     });
 }
+function removeFromCart(i) { cart.splice(i, 1); localStorage.setItem("renuova_cart", JSON.stringify(cart)); updateCartBadge(); renderCart(); }
 
-function removeFromCart(i) {
-    cart.splice(i, 1);
-    localStorage.setItem("renuova_cart", JSON.stringify(cart));
-    updateCartBadge();
-    renderCart();
-}
-
-/* CHECKOUT LOGIC */
 function triggerBuyNow() {
-    if(!currentUser) {
-        alert("🔒 Login Required!\n\nPlease login to enter delivery address.");
-        openAuth();
-        return;
-    }
-    openCheckout();
-}
-
-window.openCheckout = () => {
-    document.getElementById("orderSummary").innerHTML = `
-        <b>🛍️ Buying:</b> ${selectedProduct.n}<br>
-        <b>💰 Amount:</b> ${selectedProduct.p}<br>
-        <small style="color:#2874f0;">User: ${currentUser.email}</small>
-    `;
+    if(!currentUser) { alert("Please login first!"); openAuth(); return; }
+    document.getElementById("orderSummary").innerHTML = `<b>🛍️ Product:</b> ${selectedProduct.n}<br><b>💰 Price:</b> ${selectedProduct.p}`;
     document.getElementById("custName").value = currentUser.name;
     document.getElementById("checkoutPage").style.display = "block";
 }
-window.closeCheckout = () => { document.getElementById("checkoutPage").style.display = "none"; }
+function closeCheckout() { document.getElementById("checkoutPage").style.display = "none"; }
 
-window.confirmOrder = () => {
-    let name = document.getElementById("custName").value;
-    let phone = document.getElementById("custPhone").value;
-    let state = document.getElementById("custState").value;
-    let dist = document.getElementById("custDistrict").value;
-    let pin = document.getElementById("custPin").value;
-    let addr = document.getElementById("custFullAddress").value;
-
+/* FIXED WHATSAPP DETAILS FUNCTION */
+function confirmOrder() {
+    let name = document.getElementById("custName").value.trim();
+    let phone = document.getElementById("custPhone").value.trim();
+    let state = document.getElementById("custState").value.trim();
+    let dist = document.getElementById("custDistrict").value.trim();
+    let pin = document.getElementById("custPin").value.trim();
+    let addr = document.getElementById("custFullAddress").value.trim();
+    
     if(!name || !phone || !state || !dist || !pin || !addr) return alert("All address fields are required!");
 
     let orderData = { 
-        productName: selectedProduct.n, 
-        price: selectedProduct.p, 
-        customerName: name, 
-        phone: phone, 
-        location: `${dist}, ${state}`,
-        pincode: pin,
-        address: addr, 
-        userEmail: currentUser.email,
-        date: new Date().toLocaleString() 
+        productName: selectedProduct.n, price: selectedProduct.p, 
+        customerName: name, phone: phone, location: `${dist}, ${state}`,
+        pincode: pin, address: addr, userEmail: currentUser.email, date: new Date().toLocaleString() 
     };
 
     dbO.push(orderData).then(() => {
+        // Updated WhatsApp Message with all details
         let msg = `*🛍️ NEW ORDER - RENUOVA*%0A%0A` +
+                  `*--- Product Info ---*%0A` +
                   `*Product:* ${selectedProduct.n}%0A` +
                   `*Price:* ${selectedProduct.p}%0A%0A` +
-                  `*Customer:* ${name}%0A` +
-                  `*Phone:* ${phone}%0A` +
-                  `*Address:* ${addr}, ${dist}, ${state} (${pin})%0A%0A` +
+                  `*--- Customer Info ---*%0A` +
+                  `*Name:* ${name}%0A` +
+                  `*Phone:* ${phone}%0A%0A` +
+                  `*--- Delivery Address ---*%0A` +
+                  `*Address:* ${addr}%0A` +
+                  `*District:* ${dist}%0A` +
+                  `*State:* ${state}%0A` +
+                  `*Pincode:* ${pin}%0A%0A` +
                   `*Email:* ${currentUser.email}`;
+                  
         window.open(`https://wa.me/9229288001?text=${msg}`);
-        closeCheckout();
-        goHome();
-        alert("Success! Redirecting to WhatsApp for confirmation.");
+        closeCheckout(); goHome();
     });
 }
 
@@ -647,17 +560,18 @@ window.confirmOrder = () => {
 function searchProduct(e){
   let q = e.target.value.toLowerCase();
   let filtered = products.filter(p => p.n.toLowerCase().includes(q));
+  const home = document.getElementById("home");
   home.innerHTML = "";
-  filtered.forEach((x,i)=>{ 
-      let originalIdx = products.indexOf(x);
-      home.innerHTML += `<div class="card" onclick="openP(${originalIdx})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`; 
+  filtered.forEach((x)=>{ 
+      let idx = products.indexOf(x);
+      home.innerHTML += `<div class="card" onclick="openP(${idx})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`; 
   });
 }
 
-/* ADMIN LOGIC */
+/* ADMIN SYSTEM */
 window.goHome=()=>{ 
     document.querySelectorAll(".page").forEach(p=>p.style.display="none"); 
-    homeSection.style.display="block"; 
+    document.getElementById("homeSection").style.display="block"; 
 }
 
 let logoClickCount = 0;
@@ -666,184 +580,125 @@ document.getElementById("logo").onclick=()=>{
     if(logoClickCount===10){
         let pass = prompt("Admin Password:");
         if(pass==="nitish20086"){ 
-            homeSection.style.display="none"; 
-            adminList.style.display="block"; 
+            document.getElementById("homeSection").style.display="none"; 
+            document.getElementById("adminList").style.display="block"; 
             renderList(); 
-        } else {
-            alert("Unauthorized Access!");
-        }
+        } else alert("Unauthorized!");
         logoClickCount=0;
     }
 }
 
 function renderList(){
+ const plist = document.getElementById("plist");
  plist.innerHTML="";
  products.forEach((x,i)=>{
-  plist.innerHTML+=`<tr><td>${x.n}</td><td>${x.p}</td><td><button onclick="editProduct(${i})">Edit</button> <button onclick="del(${i})" style="background:red; color:#fff; border:none;">X</button></td></tr>`;
+  plist.innerHTML+=`<tr><td>${x.n}</td><td>${x.p}</td><td><button onclick="editProduct(${i})">Edit</button> <button onclick="del(${i})" style="background:red; color:#fff;">X</button></td></tr>`;
  });
 }
 
-window.savePosters = () => {
-    let p1 = document.getElementById("postUrl1").value;
-    let p2 = document.getElementById("postUrl2").value;
-    if(p1 && p2) dbP.set([p1, p2]).then(() => alert("Banners Updated!"));
+window.save = () => {
+    let name = document.getElementById("aname").value.trim();
+    let price = document.getElementById("aprice").value.trim();
+    if(!name || !price) { alert("Name and Price required!"); return; }
+    let imgs = [document.getElementById("img1").value.trim(), document.getElementById("img2").value.trim(), document.getElementById("img3").value.trim()].filter(u => u);
+    let productObj = { n: name, p: price, imgs: imgs.length ? imgs : ["https://via.placeholder.com/500"], d: document.getElementById("adetails").value, w: document.getElementById("awarranty").value };
+    if (editIndex === null) products.push(productObj); else products[editIndex] = productObj;
+    db.set(products).then(() => { alert("Saved!"); editIndex = null; openAdminList(); });
 }
 
 window.editProduct=(i)=>{
     editIndex=i;
-    formTitle.innerText="Edit Product Data";
-    adminList.style.display="none";
-    adminEdit.style.display="block";
-    aname.value=products[i].n;
-    aprice.value=products[i].p;
-    img1.value=products[i].imgs[0]||"";
-    img2.value=products[i].imgs[1]||"";
-    img3.value=products[i].imgs[2]||"";
-    adetails.value=products[i].d;
-    awarranty.value=products[i].w;
+    document.getElementById("formTitle").innerText="Edit Product";
+    document.getElementById("adminList").style.display="none";
+    document.getElementById("adminEdit").style.display="block";
+    document.getElementById("aname").value=products[i].n;
+    document.getElementById("aprice").value=products[i].p;
+    document.getElementById("img1").value=products[i].imgs[0]||"";
+    document.getElementById("img2").value=products[i].imgs[1]||"";
+    document.getElementById("img3").value=products[i].imgs[2]||"";
+    document.getElementById("adetails").value=products[i].d;
+    document.getElementById("awarranty").value=products[i].w;
 }
 
 window.addNew=()=>{
     editIndex=null;
-    formTitle.innerText="Add New Entry";
-    adminList.style.display="none";
-    adminEdit.style.display="block";
-    aname.value=aprice.value=img1.value=img2.value=img3.value=adetails.value=awarranty.value="";
+    document.getElementById("formTitle").innerText="Add New Product";
+    document.getElementById("adminList").style.display="none";
+    document.getElementById("adminEdit").style.display="block";
+    document.getElementById("aname").value = document.getElementById("aprice").value = "";
+    document.getElementById("adetails").value = document.getElementById("awarranty").value = "";
 }
 
 window.openAdminList=()=>{ 
     document.querySelectorAll(".page").forEach(p=>p.style.display="none"); 
-    adminList.style.display="block"; 
+    document.getElementById("adminList").style.display="block"; 
     renderList(); 
 }
 
-window.del=(i)=>{ if(confirm("Are you sure?")){ products.splice(i,1); db.set(products); } }
+window.del=(i)=>{ if(confirm("Delete?")){ products.splice(i,1); db.set(products); } }
 
-window.save=()=>{
-    let imgs=[img1.value, img2.value, img3.value].filter(x=>x);
-    let obj={
-        n:aname.value,
-        p:aprice.value,
-        imgs:imgs.length?imgs:["https://via.placeholder.com/500"],
-        d:adetails.value,
-        w:awarranty.value
-    };
-    if(editIndex===null) products.push(obj);
-    else products[editIndex]=obj;
-    db.set(products).then(()=>{ alert("Saved Successfully!"); openAdminList(); });
-}
-
-/* ADMIN: CUSTOMER LOGINS */
+/* ADMIN: OTHER VIEWS */
 window.showCustomerDetails = () => {
     document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     document.getElementById("adminLoginDetails").style.display = "block";
     dbU.once("value", (s) => {
-        let data = s.val();
-        let html = "";
-        for(let k in data) {
-            html += `<tr>
-                <td>${data[k].name || 'Old User'}</td>
-                <td>${data[k].email}</td>
-                <td style="color:red; font-weight:bold; background:#fff0f0;">${data[k].pass}</td>
-                <td>${data[k].date}</td>
-            </tr>`;
-        }
-        loginTableBody.innerHTML = html || "<tr><td colspan='4'>No users registered yet.</td></tr>";
+        let data = s.val(), html = "";
+        for(let k in data) html += `<tr><td>${data[k].name}</td><td>${data[k].email}</td><td>${data[k].pass}</td><td>${data[k].date}</td></tr>`;
+        document.getElementById("loginTableBody").innerHTML = html || "<tr><td colspan='4'>No users.</td></tr>";
     });
 }
-
-/* ADMIN: ORDER HISTORY */
 window.showOrders = () => {
-    adminList.style.display = "none";
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     document.getElementById("adminOrders").style.display = "block";
     dbO.on("value", (s) => {
-        let orders = s.val();
-        let html = "";
-        for(let k in orders) { 
-            let o = orders[k];
-            html += `<tr>
-                <td>${o.date}</td>
-                <td>${o.productName}</td>
-                <td>${o.customerName}<br>${o.phone}</td>
-                <td>${o.location}</td>
-                <td><button onclick="delOrder('${k}')" style="background:red; color:#fff; border:none;">X</button></td>
-            </tr>`; 
-        }
-        document.getElementById("orderTableBody").innerHTML = html || "<tr><td colspan='5'>No pending orders.</td></tr>";
+        let orders = s.val(), html = "";
+        for(let k in orders) html += `<tr><td>${orders[k].date}</td><td>${orders[k].productName}</td><td>${orders[k].customerName}</td><td>${orders[k].location}</td><td><button onclick="delOrder('${k}')">X</button></td></tr>`;
+        document.getElementById("orderTableBody").innerHTML = html || "<tr><td colspan='5'>No orders.</td></tr>";
     });
 }
-window.delOrder = (id) => { if(confirm("Clear this order?")) dbO.child(id).remove(); }
+window.delOrder = (id) => { if(confirm("Delete order?")) dbO.child(id).remove(); }
 
 /* CHAT SYSTEM */
 function openSupport() { document.getElementById("supportChatPage").style.display = "flex"; loadUserMessages(); }
 function closeSupport() { document.getElementById("supportChatPage").style.display = "none"; }
-
 function loadUserMessages() {
     dbChat.child(myChatId).child("messages").on("value", (s) => {
-        const msgDiv = document.getElementById("chatMessages");
-        msgDiv.innerHTML = "";
-        s.forEach((snap) => {
-            const m = snap.val();
-            msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`;
-        });
+        const msgDiv = document.getElementById("chatMessages"); msgDiv.innerHTML = "";
+        s.forEach((snap) => { let m = snap.val(); msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; });
         msgDiv.scrollTop = msgDiv.scrollHeight;
     });
 }
 function sendUserMsg() {
-    const input = document.getElementById("userChatInput"); 
-    if(!input.value.trim()) return;
+    const input = document.getElementById("userChatInput"); if(!input.value.trim()) return;
     dbChat.child(myChatId).child("messages").push({ sender: "user", text: input.value, time: Date.now() });
     dbChat.child(myChatId).update({ lastMsg: input.value, chatId: myChatId, lastTime: Date.now() });
     input.value = "";
 }
 
 /* ADMIN CHAT */
-let activeAdminChat = "";
 function showAdminSupport() {
     document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     document.getElementById("adminSupportList").style.display = "block";
     dbChat.on("value", (s) => {
-        const chats = s.val(); 
-        const container = document.getElementById("chatListContainer"); 
-        container.innerHTML = "";
-        if(!chats) { container.innerHTML = "Empty inbox."; return; }
-        for(let id in chats) { 
-            container.innerHTML += `
-            <div class="admin-chat-card">
-                <div onclick="openAdminReply('${id}')" style="flex:1; cursor:pointer;">
-                    <b>${id}</b><br>
-                    <small>${chats[id].lastMsg}</small>
-                </div>
-                <button class="btn-delete-chat" onclick="deleteChat(event, '${id}')"><i class="fa fa-trash"></i></button>
-            </div>`; 
-        }
+        const chats = s.val(), container = document.getElementById("chatListContainer"); container.innerHTML = "";
+        for(let id in chats) container.innerHTML += `<div class="admin-chat-card"><div onclick="openAdminReply('${id}')"><b>${id}</b><br><small>${chats[id].lastMsg}</small></div><button onclick="deleteChat(event, '${id}')">X</button></div>`;
     });
 }
-function deleteChat(event, id) {
-    event.stopPropagation();
-    if(confirm("Delete this conversation?")) dbChat.child(id).remove();
-}
+let activeAdminChat = "";
 function openAdminReply(id) {
-    activeAdminChat = id; 
-    document.getElementById("adminSupportList").style.display = "none"; 
-    document.getElementById("adminReplyPage").style.display = "block";
+    activeAdminChat = id; document.getElementById("adminSupportList").style.display = "none"; document.getElementById("adminReplyPage").style.display = "block";
     dbChat.child(id).child("messages").on("value", (s) => {
-        const msgDiv = document.getElementById("adminChatMessages"); 
-        msgDiv.innerHTML = "";
-        s.forEach((snap) => {
-            const m = snap.val();
-            msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`;
-        }); 
+        const msgDiv = document.getElementById("adminChatMessages"); msgDiv.innerHTML = "";
+        s.forEach((snap) => { let m = snap.val(); msgDiv.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`; });
         msgDiv.scrollTop = msgDiv.scrollHeight; 
     });
 }
 function sendAdminReply() {
-    const input = document.getElementById("adminReplyInput"); 
-    if(!input.value.trim()) return;
+    const input = document.getElementById("adminReplyInput"); if(!input.value.trim()) return;
     dbChat.child(activeAdminChat).child("messages").push({ sender: "admin", text: input.value, time: Date.now() });
-    dbChat.child(activeAdminChat).update({ lastMsg: "Admin: " + input.value, lastTime: Date.now() });
     input.value = "";
 }
+function deleteChat(e, id) { e.stopPropagation(); if(confirm("Delete chat?")) dbChat.child(id).remove(); }
 </script>
 
 </body>

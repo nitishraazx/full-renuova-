@@ -17,7 +17,7 @@
 #loader {
     position: fixed;
     top: 0; left: 0;
-    width: 100%; height: 100%;
+    width: 100%; height: 100vh;
     background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
     display: flex;
     flex-direction: column;
@@ -453,29 +453,41 @@ let homePosters = ["https://via.placeholder.com/600x200"];
 let posterTick = 0;
 let selectedProduct = null;
 let checkoutMode = "single"; 
-let cart = JSON.parse(localStorage.getItem("renuova_cart")) || [];
-let wishlist = JSON.parse(localStorage.getItem("renuova_wish")) || [];
+
+/* SAFETY LOCALSTORAGE ACCESS */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem("renuova_cart")) || []; } catch(e) { cart = []; }
+
+let wishlist = [];
+try { wishlist = JSON.parse(localStorage.getItem("renuova_wish")) || []; } catch(e) { wishlist = []; }
+
 let currentUser = null;
 const myChatId = localStorage.getItem("renuova_chat_id") || "User_" + Math.floor(Math.random() * 1000000);
 localStorage.setItem("renuova_chat_id", myChatId);
 
-/* INITIALIZATION */
-window.onload = () => {
-  setTimeout(()=>{
+/* FIXED INITIALIZATION FOR MOBILE */
+function hideLoader() {
     const loader = document.getElementById("loader");
     const site = document.getElementById("mainSite");
-    loader.style.transform = "translateY(-100%)";
-    site.style.display="block";
-    setTimeout(() => site.style.opacity = "1", 50);
+    if(loader) loader.style.transform = "translateY(-100%)";
+    if(site) {
+        site.style.display="block";
+        setTimeout(() => site.style.opacity = "1", 50);
+    }
     checkUserSession();
     updateCartBadge();
-  }, 2500);
-};
+}
+
+// Mobile compatibility ke liye DOMContentLoaded use karein
+document.addEventListener("DOMContentLoaded", () => {
+    // 2.5 second baad loader hat jayega chahe sab load ho ya na ho
+    setTimeout(hideLoader, 2500);
+});
 
 /* DATA SYNC */
 db.on("value",(s)=>{ 
     products=s.val()||[]; 
-    loadHome(); 
+    loadHome(products); // Fix: passing products directly
     if(document.getElementById("adminList").style.display==="block") renderList(); 
 });
 dbP.on("value", (s) => { if(s.val()){ homePosters = s.val(); updatePosterImage(); }});
@@ -483,15 +495,17 @@ setInterval(() => { posterTick = (posterTick + 1) % homePosters.length; updatePo
 
 function updatePosterImage() { const imgEl = document.getElementById("homePosterImg"); if(imgEl) imgEl.src = homePosters[posterTick]; }
 
-function loadHome(){
+function loadHome(dataList){
  const home = document.getElementById("home");
+ if(!home) return;
  home.innerHTML="";
- products.forEach((x,i)=>{
+ let listToRender = dataList || products;
+ listToRender.forEach((x,i)=>{
   let isLiked = wishlist.includes(x.n) ? 'active' : '';
   home.innerHTML+=`
     <div class="card">
         <div class="wish-btn ${isLiked}" onclick="toggleWish('${x.n}', event)"><i class="fa fa-heart"></i></div>
-        <div onclick="openP(${i})">
+        <div onclick="openP(${products.indexOf(x)})">
             <img src="${x.imgs[0]}">
             <h3>${x.n}</h3>
             <p>${x.p}</p>
@@ -506,7 +520,7 @@ function toggleWish(name, e) {
     if(wishlist.includes(name)) wishlist = wishlist.filter(n => n !== name);
     else wishlist.push(name);
     localStorage.setItem("renuova_wish", JSON.stringify(wishlist));
-    loadHome();
+    loadHome(products);
     if(document.getElementById("wishlistPage").style.display === "block") renderWishlist();
 }
 
@@ -548,6 +562,7 @@ function hideAllPages() {
 }
 
 function setActiveNav(el) {
+    if(!el) return;
     document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
     el.classList.add("active");
 }
@@ -611,7 +626,6 @@ function confirmOrder() {
     let orderId = "ORD" + Date.now();
     let pName = checkoutMode === "single" ? selectedProduct.n : cart.map(i=>i.n).join(", ");
     
-    // FIX PRICE: Use correct price based on checkout mode
     let pPrice = "";
     if(checkoutMode === "single") {
         pPrice = selectedProduct.p;
@@ -713,7 +727,10 @@ function hideTracking() { document.getElementById("myOrdersList").style.display 
 
 /* CART & PRODUCT LOGIC */
 function extractPrice(s) { return parseFloat(s.replace(/[^\d.]/g, '')) || 0; }
-function updateCartBadge() { document.getElementById("cartCount").innerText = cart.length; }
+function updateCartBadge() { 
+    const badge = document.getElementById("cartCount");
+    if(badge) badge.innerText = cart.length; 
+}
 function addToCart() {
     cart.push(selectedProduct);
     localStorage.setItem("renuova_cart", JSON.stringify(cart));
@@ -744,7 +761,6 @@ function openP(i) {
     currentImgs = products[i].imgs;
     slideIndex = 0;
     
-    // Setup Thumbnails
     const thumbBar = document.getElementById("pThumbBar");
     thumbBar.innerHTML = "";
     currentImgs.forEach((url, idx) => {

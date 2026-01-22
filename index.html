@@ -74,9 +74,10 @@ header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content:
 .card h3{margin:6px 0 2px;font-size:14px;font-weight:600; color:#333; height: 36px; overflow: hidden;}
 .card p{margin:0;color:#388e3c;font-weight:700;}
 
-/* WISHLIST HEART */
+/* WISHLIST HEART & SHARE */
 .wish-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #ccc; transition: 0.3s; z-index: 10; }
 .wish-btn.active { color: #ff3f6c; }
+.share-icon-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.8); width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #2874f0; transition: 0.3s; z-index: 10; border: none; font-size: 14px; }
 
 /* SUCCESS SCREEN OVERLAY */
 #successOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #27ae60; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
@@ -144,6 +145,11 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 .track-info b { font-size: 14px; color: #333; display: block; }
 .track-info span { font-size: 11px; color: #888; }
 
+/* CANCELLED TRACKING STYLES */
+.tracking-item.is-cancelled .track-icon { background: #e63946 !important; }
+.tracking-item.is-cancelled:after { background: #e63946 !important; }
+.tracking-item.is-cancelled b { color: #e63946; }
+
 .total-box { background: #fff; padding: 15px; border-radius: 10px; margin-top: 15px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border: 1px solid #ddd; }
 .total-box div { display: flex; justify-content: space-between; align-items: center; }
 .total-price { font-size: 20px; color: #388e3c; font-weight: 900; }
@@ -152,11 +158,44 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 .btn-delete-chat { background: #d32f2f; color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; }
 .policy-badge { background: #e3f2fd; color: #1976d2; padding: 5px 10px; border-radius: 4px; font-size: 12px; display: inline-block; margin-top: 10px; font-weight: 600; }
 
-.cancel-btn { background: #e63946; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-top: 5px; }
+/* ===== NAYA NOTIFICATION POPUP CSS ===== */
+#broadcastOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 9999;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+.broadcast-card {
+    background: #fff; width: 100%; max-width: 380px;
+    border-radius: 20px; overflow: hidden;
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    text-align: center;
+}
+@keyframes bounceIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.broadcast-card img { width: 100%; height: 210px; object-fit: cover; display: block; background: #f0f0f0; }
+.broadcast-content { padding: 25px; }
+.broadcast-content h3 { margin: 0 0 10px; color: #2874f0; font-weight: 900; font-size: 22px; }
+.broadcast-content p { font-size: 15px; color: #444; line-height: 1.6; margin-bottom: 25px; }
+.close-broadcast-btn { background: #2874f0; color: #fff; border: none; padding: 12px 0; border-radius: 30px; cursor: pointer; font-weight: 700; width: 100%; font-size: 16px; transition: 0.3s; }
+.close-broadcast-btn:active { transform: scale(0.95); }
 </style>
 </head>
 
 <body>
+
+<!-- NOTIFICATION OVERLAY -->
+<div id="broadcastOverlay">
+    <div class="broadcast-card">
+        <img id="brImg" src="">
+        <div class="broadcast-content">
+            <h3 id="brTitle">RENUOVA Update</h3>
+            <p id="brMsg"></p>
+            <button class="close-broadcast-btn" onclick="closeBroadcast()">✕ Close Notification</button>
+        </div>
+    </div>
+</div>
 
 <!-- LOADING SCREEN -->
 <div id="loader">
@@ -261,6 +300,8 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
         <h3 id="trackOrderName">Order Tracking</h3>
         <p id="trackOrderIdDisplay" style="color:#666; font-size:12px;"></p>
         <div id="trackingUI" class="tracking-container"></div>
+        <!-- CANCEL BUTTON WILL BE RENDERED HERE INSIDE DETAILS -->
+        <div id="cancelOrderSection"></div>
     </div>
 </div>
 
@@ -315,6 +356,7 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
     <div style="background: #fff9e6; padding: 10px; border-radius: 6px; margin: 15px 0;">
         <b>Warranty:</b> <span id="pwarranty"></span>
     </div>
+    <button class="btn" style="background: #25D366; margin-bottom: 10px;" onclick="shareProduct()"><i class="fa fa-share-alt"></i> Share Product</button>
     <button class="btn cart-btn" onclick="addToCart()">Add to Cart</button>
     <button class="btn" onclick="triggerBuyNow()">Buy Now</button>
 </div>
@@ -336,6 +378,16 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 <!-- ADMIN DASHBOARD -->
 <div id="adminList" class="page">
     <h2 style="color: #d32f2f;">Admin Dashboard</h2>
+    
+    <!-- SOCIAL BROADCAST BOX -->
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2874f0;">
+        <h4 style="margin: 0 0 10px; color: #1976d2;"><i class="fa fa-bullhorn"></i> Global Notification</h4>
+        <input type="text" id="bcTitle" placeholder="Notification Title (e.g. New Offer!)">
+        <input type="text" id="bcMsg" placeholder="Notification message text...">
+        <input type="text" id="bcImg" placeholder="Image Link (Link to photo)...">
+        <button class="btn dark" onclick="sendBroadcast()" style="padding:10px; margin-top:5px;">Send to All Users</button>
+    </div>
+
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
         <button class="btn dark" onclick="goHome()">View Website</button>
         <button class="btn" onclick="addNew()">+ New Product</button>
@@ -446,6 +498,55 @@ const dbP=firebase.database().ref("posters");
 const dbO=firebase.database().ref("orders");
 const dbChat=firebase.database().ref("support_chats");
 const dbU=firebase.database().ref("users");
+const dbBroadcast = firebase.database().ref("broadcast_msg");
+
+/* ===== NOTIFICATION LOGIC ===== */
+
+// Global Broadcast listener
+dbBroadcast.on("value", s => {
+    let data = s.val();
+    if(data) {
+        let lastSeenId = localStorage.getItem("lastBroadcastId");
+        if(lastSeenId !== data.id) {
+            document.getElementById("brTitle").innerText = data.title || "RENUOVA Update";
+            document.getElementById("brMsg").innerText = data.text;
+            document.getElementById("brImg").src = data.img || "";
+            document.getElementById("brImg").style.display = data.img ? "block" : "none";
+            document.getElementById("broadcastOverlay").style.display = "flex";
+            localStorage.setItem("lastBroadcastId", data.id);
+        }
+    }
+});
+
+function closeBroadcast() { document.getElementById("broadcastOverlay").style.display = "none"; }
+
+// Specific Order update listener
+function listenToOrderUpdates() {
+    if(!currentUser) return;
+    dbO.on("child_changed", s => {
+        let order = s.val();
+        if(order.userEmail === currentUser.email) {
+            let lastNotifiedStatus = localStorage.getItem("lastStat_" + s.key);
+            if(lastNotifiedStatus !== order.status) {
+                document.getElementById("brTitle").innerText = "Order Update!";
+                document.getElementById("brMsg").innerText = `Bhai, aapka order (#${s.key.slice(-6)}) ab "${order.status}" ho gaya hai. Check kar lo!`;
+                document.getElementById("brImg").src = "https://cdn-icons-png.flaticon.com/512/3502/3502214.png";
+                document.getElementById("brImg").style.display = "block";
+                document.getElementById("broadcastOverlay").style.display = "flex";
+                localStorage.setItem("lastStat_" + s.key, order.status);
+            }
+        }
+    });
+}
+
+function sendBroadcast() {
+    let title = document.getElementById("bcTitle").value;
+    let text = document.getElementById("bcMsg").value;
+    let img = document.getElementById("bcImg").value;
+    if(!text) return alert("Bhai message to likho!");
+    dbBroadcast.set({ id: "B" + Date.now(), title, text, img, timestamp: Date.now() });
+    alert("Sabhi users ko notification bhej diya gaya hai!");
+}
 
 /* GLOBAL VARIABLES */
 let products=[], editIndex=null, slideIndex=0, currentImgs=[];
@@ -478,16 +579,14 @@ function hideLoader() {
     updateCartBadge();
 }
 
-// Mobile compatibility ke liye DOMContentLoaded use karein
 document.addEventListener("DOMContentLoaded", () => {
-    // 2.5 second baad loader hat jayega chahe sab load ho ya na ho
     setTimeout(hideLoader, 2500);
 });
 
 /* DATA SYNC */
 db.on("value",(s)=>{ 
     products=s.val()||[]; 
-    loadHome(products); // Fix: passing products directly
+    loadHome(products); 
     if(document.getElementById("adminList").style.display==="block") renderList(); 
 });
 dbP.on("value", (s) => { if(s.val()){ homePosters = s.val(); updatePosterImage(); }});
@@ -504,6 +603,9 @@ function loadHome(dataList){
   let isLiked = wishlist.includes(x.n) ? 'active' : '';
   home.innerHTML+=`
     <div class="card">
+        <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+            <i class="fa fa-share-alt"></i>
+        </button>
         <div class="wish-btn ${isLiked}" onclick="toggleWish('${x.n}', event)"><i class="fa fa-heart"></i></div>
         <div onclick="openP(${products.indexOf(x)})">
             <img src="${x.imgs[0]}">
@@ -512,6 +614,24 @@ function loadHome(dataList){
         </div>
     </div>`;
  });
+}
+
+/* SHARE FUNCTION */
+function shareProduct(customName, customPrice) {
+    let name = customName || selectedProduct.n;
+    let price = customPrice || selectedProduct.p;
+    let shareText = `Check out this amazing product on RENUOVA: *${name}* \nPrice: *${price}*\n\nShop now: ${window.location.href}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'RENUOVA - ' + name,
+            text: shareText,
+            url: window.location.href,
+        }).catch(console.error);
+    } else {
+        let waUrl = "https://wa.me/?text=" + encodeURIComponent(shareText);
+        window.open(waUrl, '_blank');
+    }
 }
 
 /* WISHLIST LOGIC */
@@ -537,7 +657,13 @@ function renderWishlist() {
     let wishData = products.filter(p => wishlist.includes(p.n));
     if(wishData.length === 0) grid.innerHTML = "<p style='grid-column: 1/3; text-align:center;'>Empty Wishlist</p>";
     wishData.forEach(x => {
-        grid.innerHTML += `<div class="card" onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`;
+        grid.innerHTML += `
+        <div class="card">
+            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+                <i class="fa fa-share-alt"></i>
+            </button>
+            <div onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
+        </div>`;
     });
 }
 
@@ -551,7 +677,13 @@ function filterCat(cat) {
     let filtered = products.filter(p => p.cat === cat);
     if(filtered.length === 0) grid.innerHTML = "No products in this category.";
     filtered.forEach(x => {
-        grid.innerHTML += `<div class="card" onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>`;
+        grid.innerHTML += `
+        <div class="card">
+            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+                <i class="fa fa-share-alt"></i>
+            </button>
+            <div onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
+        </div>`;
     });
 }
 
@@ -608,6 +740,7 @@ function checkUserSession() {
         document.getElementById("profileSection").style.display = "block";
         document.getElementById("profNameDisplay").innerText = currentUser.name;
         document.getElementById("profEmailDisplay").innerText = currentUser.email;
+        listenToOrderUpdates(); // <--- Start listening for order notifications
     }
 }
 function logout() { localStorage.removeItem("renuova_user"); location.reload(); }
@@ -677,16 +810,11 @@ function renderMyOrders() {
         let orders = s.val();
         for(let id in orders) {
             if(orders[id].userEmail === currentUser.email) {
-                let cancelBtn = (orders[id].status !== "Cancelled" && orders[id].status !== "Delivered") ? 
-                    `<button class="cancel-btn" onclick="cancelOrder('${id}')">Cancel Order</button>` : "";
-                
-                list.innerHTML += `<div class="card" style="margin-bottom:12px; border:1px solid #ddd; cursor:default;">
-                    <div onclick="showTracking('${id}')">
-                        <b>ID: ${id.slice(-6)}</b> | <span style="color:${orders[id].status === 'Cancelled' ? 'red' : 'green'}">${orders[id].status}</span><br>
-                        <small>${orders[id].productName}</small><br>
-                        <b style="color:green;">${orders[id].price}</b>
-                    </div>
-                    ${cancelBtn}
+                let statusColor = orders[id].status === 'Cancelled' ? 'red' : 'green';
+                list.innerHTML += `<div class="card" style="margin-bottom:12px; border:1px solid #ddd;" onclick="showTracking('${id}')">
+                    <b>ID: ${id.slice(-6)}</b> | <span style="color:${statusColor}">${orders[id].status}</span><br>
+                    <small>${orders[id].productName}</small><br>
+                    <b style="color:green;">${orders[id].price}</b>
                 </div>`;
             }
         }
@@ -695,9 +823,12 @@ function renderMyOrders() {
 
 function cancelOrder(id) {
     if(confirm("Are you sure you want to cancel this order?")) {
-        dbO.child(id).update({ status: "Cancelled" }).then(() => {
-            alert("Order Cancelled successfully.");
-            renderMyOrders();
+        dbO.child(id).update({ 
+            status: "Cancelled" 
+        }).then(() => {
+            alert("Order Cancelled.");
+            hideTracking(); // Go back to list
+            renderMyOrders(); // Refresh list
         });
     }
 }
@@ -717,10 +848,29 @@ function showTracking(id) {
             { label: "Out for Delivery", date: o.tracking.outDate },
             { label: "Delivered", date: o.tracking.deliveredDate }
         ];
+
+        let cancelFound = false;
         stages.forEach(st => {
-            let act = st.date ? "active" : "";
-            ui.innerHTML += `<div class="tracking-item ${act}"><div class="track-icon">✓</div><div class="track-info"><b>${st.label}</b><span>${st.date || 'Pending'}</span></div></div>`;
+            let actClass = "";
+            let displayDate = st.date || "Pending";
+
+            if(st.date) {
+                actClass = "active";
+            } else if (o.status === "Cancelled") {
+                actClass = "is-cancelled";
+                displayDate = "Cancelled";
+            }
+
+            ui.innerHTML += `<div class="tracking-item ${actClass}"><div class="track-icon">✓</div><div class="track-info"><b>${st.label}</b><span>${displayDate}</span></div></div>`;
         });
+
+        // Show Cancel button only if status is not Cancelled or Delivered
+        const cancelBtnContainer = document.getElementById("cancelOrderSection");
+        if (o.status !== "Cancelled" && o.status !== "Delivered") {
+            cancelBtnContainer.innerHTML = `<button class="btn" style="background:#e63946; margin-top:15px;" onclick="cancelOrder('${o.orderId}')">Cancel This Order</button>`;
+        } else {
+            cancelBtnContainer.innerHTML = "";
+        }
     });
 }
 function hideTracking() { document.getElementById("myOrdersList").style.display = "block"; document.getElementById("orderTrackingDetail").style.display = "none"; }

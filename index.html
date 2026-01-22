@@ -60,7 +60,6 @@
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#f1f3f6; color:#333; overflow-x: hidden; padding-bottom: 70px;}
 header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content: space-between; align-items: center; font-size:20px;font-weight:700; position: sticky; top:0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
 
-/* CATEGORY BAR */
 .cat-container { display: flex; overflow-x: auto; background: #fff; padding: 10px; gap: 12px; border-bottom: 1px solid #ddd; scrollbar-width: none; }
 .cat-container::-webkit-scrollbar { display: none; }
 .cat-card { min-width: 75px; text-align: center; cursor: pointer; }
@@ -74,17 +73,14 @@ header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content:
 .card h3{margin:6px 0 2px;font-size:14px;font-weight:600; color:#333; height: 36px; overflow: hidden;}
 .card p{margin:0;color:#388e3c;font-weight:700;}
 
-/* WISHLIST HEART & SHARE */
 .wish-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #ccc; transition: 0.3s; z-index: 10; }
 .wish-btn.active { color: #ff3f6c; }
 .share-icon-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.8); width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #2874f0; transition: 0.3s; z-index: 10; border: none; font-size: 14px; }
 
-/* SUCCESS SCREEN OVERLAY */
 #successOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #27ae60; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
 .success-icon { font-size: 100px; margin-bottom: 20px; animation: pop 0.5s ease; }
 @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1.2); } }
 
-/* BOTTOM NAVIGATION */
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1001; }
 .nav-item { text-align: center; color: #717478; font-size: 10px; flex: 1; cursor: pointer; }
 .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
@@ -93,25 +89,21 @@ header{background:#2874f0;color:#fff;padding:14px;display:flex; justify-content:
 .page{display:none;padding:12px; animation: fadeIn 0.3s;}
 @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
 
-/* POSTER SLIDER */
 .home-poster-container { padding: 10px; display: block; }
 .poster-slider { width: 100%; height: 180px; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 @media (min-width: 600px) { .poster-slider { height: 280px; } }
 .poster-slider img { width: 100%; height: 100%; object-fit: cover; }
 
-/* PRODUCT DETAILS SLIDER */
 .slider{position:relative;background:#fff;padding:10px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1); text-align: center;}
 .slider img{width:100%;height:280px;object-fit:contain;border-radius:10px;}
 .arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.8);color:#000;padding:8px 12px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.3); z-index: 5;}
 .left{left:8px}.right{right:8px}
 
-/* THUMBNAIL BAR */
 .thumb-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
 .thumb-bar::-webkit-scrollbar { display: none; }
 .thumb-img { width: 60px; height: 60px; object-fit: contain; border: 2px solid #ddd; border-radius: 5px; flex-shrink: 0; cursor: pointer; }
 .thumb-img.active { border-color: #2874f0; }
 
-/* BUTTONS */
 .btn{background:#fb641b;color:#fff;padding:14px;text-align:center;border-radius:8px;margin-top:12px;text-decoration:none;display:block;font-weight:700; border:none; width:100%; cursor:pointer; font-size: 16px;}
 .btn.dark{background:#2874f0}
 .btn.cart-btn{background:#ff9f00; margin-bottom: 5px;}
@@ -121,11 +113,9 @@ input,textarea,select{width:100%;padding:12px;margin:6px 0;border-radius:6px;bor
 table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px; font-size: 11px;}
 th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 
-/* PAGES */
 #authPage, #cartPage, #myOrdersPage, #wishlistPage, #categoryPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1f3f6; z-index: 2500; display: none; padding: 20px; box-sizing: border-box; overflow-y: auto; padding-bottom: 100px; }
 .badge { background: #ff3f6c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; vertical-align: middle; margin-left: 3px; border: 1px solid #fff; }
 
-/* CHAT CSS */
 #supportChatPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: none; flex-direction: column; }
 .chat-header { background: #2874f0; color: #fff; padding: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
 #chatMessages { flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
@@ -135,7 +125,6 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 .chat-input-box { padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 8px; background:#fff;}
 .chat-input-box input { margin: 0; flex: 1; }
 
-/* TRACKING UI STYLES */
 .tracking-container { background: #fff; padding: 20px; border-radius: 12px; margin-top: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 .tracking-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px; position: relative; }
 .tracking-item:not(:last-child):after { content: ''; position: absolute; left: 11px; top: 25px; width: 2px; height: 35px; background: #ddd; }
@@ -144,8 +133,6 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
 .tracking-item.active .track-icon { background: #388e3c; }
 .track-info b { font-size: 14px; color: #333; display: block; }
 .track-info span { font-size: 11px; color: #888; }
-
-/* CANCELLED TRACKING STYLES */
 .tracking-item.is-cancelled .track-icon { background: #e63946 !important; }
 .tracking-item.is-cancelled:after { background: #e63946 !important; }
 .tracking-item.is-cancelled b { color: #e63946; }
@@ -190,7 +177,7 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
     <div class="broadcast-card">
         <img id="brImg" src="">
         <div class="broadcast-content">
-            <h3 id="brTitle">RENUOVA Update</h3>
+            <h3 id="brTitle">Update</h3>
             <p id="brMsg"></p>
             <button class="close-broadcast-btn" onclick="closeBroadcast()">✕ Close Notification</button>
         </div>
@@ -356,7 +343,7 @@ th,td{border:1px solid #ddd;padding:6px;text-align:center;}
     <div style="background: #fff9e6; padding: 10px; border-radius: 6px; margin: 15px 0;">
         <b>Warranty:</b> <span id="pwarranty"></span>
     </div>
-    <button class="btn" style="background: #25D366; margin-bottom: 10px;" onclick="shareProduct()"><i class="fa fa-share-alt"></i> Share Product</button>
+    <button id="pShareBtn" class="btn" style="background: #25D366; margin-bottom: 10px;"><i class="fa fa-share-alt"></i> Share Product</button>
     <button class="btn cart-btn" onclick="addToCart()">Add to Cart</button>
     <button class="btn" onclick="triggerBuyNow()">Buy Now</button>
 </div>
@@ -508,31 +495,37 @@ dbBroadcast.on("value", s => {
     if(data) {
         let lastSeenId = localStorage.getItem("lastBroadcastId");
         if(lastSeenId !== data.id) {
-            document.getElementById("brTitle").innerText = data.title || "RENUOVA Update";
-            document.getElementById("brMsg").innerText = data.text;
-            document.getElementById("brImg").src = data.img || "";
-            document.getElementById("brImg").style.display = data.img ? "block" : "none";
-            document.getElementById("broadcastOverlay").style.display = "flex";
+            triggerPopup(data.title || "RENUOVA Update", data.text, data.img);
             localStorage.setItem("lastBroadcastId", data.id);
         }
     }
 });
 
+function triggerPopup(title, msg, img) {
+    document.getElementById("brTitle").innerText = title;
+    document.getElementById("brMsg").innerText = msg;
+    const imgEl = document.getElementById("brImg");
+    if(img) {
+        imgEl.src = img;
+        imgEl.style.display = "block";
+    } else {
+        imgEl.style.display = "none";
+    }
+    document.getElementById("broadcastOverlay").style.display = "flex";
+}
+
 function closeBroadcast() { document.getElementById("broadcastOverlay").style.display = "none"; }
 
-// Specific Order update listener
+// Specific Order update listener (FIXED LISTENER)
 function listenToOrderUpdates() {
     if(!currentUser) return;
+    // We listen to the specific path for changes
     dbO.on("child_changed", s => {
         let order = s.val();
-        if(order.userEmail === currentUser.email) {
+        if(order && order.userEmail === currentUser.email) {
             let lastNotifiedStatus = localStorage.getItem("lastStat_" + s.key);
             if(lastNotifiedStatus !== order.status) {
-                document.getElementById("brTitle").innerText = "Order Update!";
-                document.getElementById("brMsg").innerText = `Bhai, aapka order (#${s.key.slice(-6)}) ab "${order.status}" ho gaya hai. Check kar lo!`;
-                document.getElementById("brImg").src = "https://cdn-icons-png.flaticon.com/512/3502/3502214.png";
-                document.getElementById("brImg").style.display = "block";
-                document.getElementById("broadcastOverlay").style.display = "flex";
+                triggerPopup("Order Update!", `Bhai, aapka order (#${s.key.slice(-6)}) ab "${order.status}" ho gaya hai. Check kar lo!`, "https://cdn-icons-png.flaticon.com/512/3502/3502214.png");
                 localStorage.setItem("lastStat_" + s.key, order.status);
             }
         }
@@ -566,7 +559,17 @@ let currentUser = null;
 const myChatId = localStorage.getItem("renuova_chat_id") || "User_" + Math.floor(Math.random() * 1000000);
 localStorage.setItem("renuova_chat_id", myChatId);
 
-/* FIXED INITIALIZATION FOR MOBILE */
+/* INITIALIZATION */
+function handleDeepLinking() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#p')) {
+        const index = parseInt(hash.replace('#p', ''));
+        if (!isNaN(index) && products[index]) {
+            setTimeout(() => openP(index), 500);
+        }
+    }
+}
+
 function hideLoader() {
     const loader = document.getElementById("loader");
     const site = document.getElementById("mainSite");
@@ -577,6 +580,7 @@ function hideLoader() {
     }
     checkUserSession();
     updateCartBadge();
+    handleDeepLinking(); 
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -601,13 +605,14 @@ function loadHome(dataList){
  let listToRender = dataList || products;
  listToRender.forEach((x,i)=>{
   let isLiked = wishlist.includes(x.n) ? 'active' : '';
+  const realIndex = products.indexOf(x);
   home.innerHTML+=`
     <div class="card">
-        <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+        <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct(${realIndex})">
             <i class="fa fa-share-alt"></i>
         </button>
         <div class="wish-btn ${isLiked}" onclick="toggleWish('${x.n}', event)"><i class="fa fa-heart"></i></div>
-        <div onclick="openP(${products.indexOf(x)})">
+        <div onclick="openP(${realIndex})">
             <img src="${x.imgs[0]}">
             <h3>${x.n}</h3>
             <p>${x.p}</p>
@@ -616,19 +621,36 @@ function loadHome(dataList){
  });
 }
 
-/* SHARE FUNCTION */
-function shareProduct(customName, customPrice) {
-    let name = customName || selectedProduct.n;
-    let price = customPrice || selectedProduct.p;
-    let shareText = `Check out this amazing product on RENUOVA: *${name}* \nPrice: *${price}*\n\nShop now: ${window.location.href}`;
+/* SHARE FUNCTION (MODIFIED TO SHARE PHOTO) */
+async function shareProduct(index) {
+    const p = products[index];
+    const name = p.n;
+    const price = p.p;
+    const deepLink = window.location.origin + window.location.pathname + "#p" + index;
+    const shareText = `Check out this amazing product on RENUOVA: *${name}*\nPrice: *${price}*\n\nBuy now: ${deepLink}`;
 
-    if (navigator.share) {
-        navigator.share({
-            title: 'RENUOVA - ' + name,
-            text: shareText,
-            url: window.location.href,
-        }).catch(console.error);
-    } else {
+    try {
+        // Fetch the image and convert it to a file for sharing
+        const response = await fetch(p.imgs[0]);
+        const blob = await response.blob();
+        const file = new File([blob], 'product.jpg', { type: 'image/jpeg' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                title: 'RENUOVA - ' + name,
+                text: shareText,
+                files: [file],
+            });
+        } else {
+            // Fallback for browsers that don't support file sharing
+            await navigator.share({
+                title: 'RENUOVA - ' + name,
+                text: shareText,
+                url: deepLink,
+            });
+        }
+    } catch (error) {
+        // Ultimate fallback to WhatsApp URL
         let waUrl = "https://wa.me/?text=" + encodeURIComponent(shareText);
         window.open(waUrl, '_blank');
     }
@@ -657,12 +679,13 @@ function renderWishlist() {
     let wishData = products.filter(p => wishlist.includes(p.n));
     if(wishData.length === 0) grid.innerHTML = "<p style='grid-column: 1/3; text-align:center;'>Empty Wishlist</p>";
     wishData.forEach(x => {
+        const realIndex = products.indexOf(x);
         grid.innerHTML += `
         <div class="card">
-            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct(${realIndex})">
                 <i class="fa fa-share-alt"></i>
             </button>
-            <div onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
+            <div onclick="openP(${realIndex})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
         </div>`;
     });
 }
@@ -677,12 +700,13 @@ function filterCat(cat) {
     let filtered = products.filter(p => p.cat === cat);
     if(filtered.length === 0) grid.innerHTML = "No products in this category.";
     filtered.forEach(x => {
+        const realIndex = products.indexOf(x);
         grid.innerHTML += `
         <div class="card">
-            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct('${x.n}', '${x.p}')">
+            <button class="share-icon-btn" onclick="event.stopPropagation(); shareProduct(${realIndex})">
                 <i class="fa fa-share-alt"></i>
             </button>
-            <div onclick="openP(${products.indexOf(x)})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
+            <div onclick="openP(${realIndex})"><img src="${x.imgs[0]}"><h3>${x.n}</h3><p>${x.p}</p></div>
         </div>`;
     });
 }
@@ -740,7 +764,7 @@ function checkUserSession() {
         document.getElementById("profileSection").style.display = "block";
         document.getElementById("profNameDisplay").innerText = currentUser.name;
         document.getElementById("profEmailDisplay").innerText = currentUser.email;
-        listenToOrderUpdates(); // <--- Start listening for order notifications
+        listenToOrderUpdates(); // <--- START LISTENING ON LOGIN
     }
 }
 function logout() { localStorage.removeItem("renuova_user"); location.reload(); }
@@ -827,8 +851,8 @@ function cancelOrder(id) {
             status: "Cancelled" 
         }).then(() => {
             alert("Order Cancelled.");
-            hideTracking(); // Go back to list
-            renderMyOrders(); // Refresh list
+            hideTracking(); 
+            renderMyOrders(); 
         });
     }
 }
@@ -849,7 +873,6 @@ function showTracking(id) {
             { label: "Delivered", date: o.tracking.deliveredDate }
         ];
 
-        let cancelFound = false;
         stages.forEach(st => {
             let actClass = "";
             let displayDate = st.date || "Pending";
@@ -864,7 +887,6 @@ function showTracking(id) {
             ui.innerHTML += `<div class="tracking-item ${actClass}"><div class="track-icon">✓</div><div class="track-info"><b>${st.label}</b><span>${displayDate}</span></div></div>`;
         });
 
-        // Show Cancel button only if status is not Cancelled or Delivered
         const cancelBtnContainer = document.getElementById("cancelOrderSection");
         if (o.status !== "Cancelled" && o.status !== "Delivered") {
             cancelBtnContainer.innerHTML = `<button class="btn" style="background:#e63946; margin-top:15px;" onclick="cancelOrder('${o.orderId}')">Cancel This Order</button>`;
@@ -924,6 +946,11 @@ function openP(i) {
     document.getElementById("preturn").innerText = "↺ " + (selectedProduct.ret || "Policy");
     document.getElementById("pdetails").innerText = selectedProduct.d;
     document.getElementById("pwarranty").innerText = selectedProduct.w;
+    
+    // Setup specific share button for this product
+    const realIdx = products.indexOf(selectedProduct);
+    document.getElementById("pShareBtn").onclick = () => shareProduct(realIdx);
+
     window.scrollTo(0,0);
 }
 
